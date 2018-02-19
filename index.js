@@ -9,6 +9,8 @@ const schedule = require('node-schedule');
 const logger = require('./src/common/logger');
 const errors = require('./src/common/errors');
 
+config.TEMPLATE_MAP = JSON.parse(config.TEMPLATE_MAP);
+
 // key is topic name, e.g. 'notifications.connect.project.created';
 // value is handler for the topic to find user ids that should receive notifications for a message,
 // it is defined as: function(topic, message, callback),

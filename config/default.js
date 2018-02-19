@@ -30,11 +30,8 @@ module.exports = {
     process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
 
   // mapping from event type to sendgrid email template id
-  TEMPLATE_MAP: {
-    'email.project.created': 'f6f1e082-b12d-4117-a9f1-509013624465',
-    'email.project.updated': 'fb89a4e1-cf42-4d7d-9f03-c22a601a5554',
-  },
-  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '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',
+  TEMPLATE_MAP: process.env.TEMPLATE_MAP,
+  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '',
   EMAIL_FROM: process.env.EMAIL_FROM || 'no-reply@topcoder.com',
   EMAIL_MAX_ERRORS: process.env.EMAIL_MAX_ERRORS || 2,
   EMAIL_PAUSE_TIME: process.env.EMAIL_PAUSE_TIME || 30,
