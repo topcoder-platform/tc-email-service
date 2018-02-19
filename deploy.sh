@@ -32,10 +32,6 @@ AWS_ECS_CLUSTER=$(eval "echo \$${ENV}_AWS_ECS_CLUSTER")
 AWS_ECS_SERVICE=$(eval "echo \$${ENV}_AWS_ECS_SERVICE")
 family=$(eval "echo \$${ENV}_AWS_ECS_TASK_FAMILY")
 AWS_ECS_CONTAINER_NAME=$(eval "echo \$${ENV}_AWS_ECS_CONTAINER_NAME")
-CERT=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT")
-
-echo "cert..."
-echo $CERT
 
 configure_aws_cli() {
 	aws --version
