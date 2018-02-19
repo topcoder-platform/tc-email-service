@@ -1,13 +1,13 @@
 'use strict';
 
 module.exports = {
-  '/templates/eventType/:name': {
+  '/email/templates/eventType/:name': {
     get: {
       controller: 'TemplateController',
       method: 'eventTypes',
     },
   },
-  '/health': {
+  '/email/health': {
     get: {
       controller: 'HealthController',
       method: 'health',

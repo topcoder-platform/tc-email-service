@@ -184,7 +184,7 @@ function start(handlers) {
         req.signature = `${def.controller}#${def.method}`;
         next();
       });
-      if (url !== '/health') {
+      if (url !== '/email/health') {
         actions.push(jwtAuth());
         actions.push((req, res, next) => {
           if (!req.authUser) {
