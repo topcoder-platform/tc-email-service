@@ -58,10 +58,9 @@ KAFKA_GROUP_ID=$(eval "echo \$${ENV}_KAFKA_GROUP_ID")
 EMAIL_FROM=$(eval "echo \$${ENV}_EMAIL_FROM")
 LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
 NODE_ENV=$(eval "echo \$${ENV}_NODE_ENV")
-NODE_PORT=$(eval "echo \$${ENV}_NODE_PORT")
+PORT=$(eval "echo \$${ENV}_NODE_PORT")
 JWKS_URI=$(eval "echo \$${ENV}_JWKSURI")
 TEMPLATE_MAP=$(eval "echo \$${ENV}_TEMPLATE_MAP")
-
 
 configure_aws_cli() {
 	aws --version
