@@ -165,9 +165,9 @@ make_task_def(){
       ],
       "portMappings": [
         {
-          "hostPort": "%s",
+          "hostPort": %s,
           "protocol": "tcp",
-          "containerPort": "%s"
+          "containerPort": %s
         }
       ],
       "logConfiguration": {
