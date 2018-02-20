@@ -95,7 +95,14 @@ deploy_cluster() {
 }
 
 make_task_def(){
-	task_template='[{
+	task_template='{
+   "family": "%s"
+   "requiresCompatibilities": ["EC2", "FARGATE"],
+   "networkMode": "awsvpc",
+   "executionRoleArn": "arn:aws:iam::%s:role/ecsTaskExecutionRole",
+   "cpu": "1024",
+   "memory": "2048",
+   "containerDefinitions": [{
       "name": "%s",
       "memory": 1000,
       "cpu" : 0,
@@ -178,14 +185,15 @@ make_task_def(){
         }
       }
     }
-  ]'
+  ]
+  }'
 	
-  task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AUTH_DOMAIN $AUTH_SECRET $DATABASE_URL $EMAIL_FROM "$JWKS_URI" "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $LOG_LEVEL $PORT $SENDGRID_API_KEY "$TEMPLATE_MAP" "$VALID_ISSUERS" $PORT $PORT $AWS_ECS_CLUSTER $AWS_REGION $ENV)
+  task_def=$(printf "$task_template" $family $AWS_ACCOUNT_ID $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AUTH_DOMAIN $AUTH_SECRET $DATABASE_URL $EMAIL_FROM "$JWKS_URI" "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $LOG_LEVEL $PORT $SENDGRID_API_KEY "$TEMPLATE_MAP" "$VALID_ISSUERS" $PORT $PORT $AWS_ECS_CLUSTER $AWS_REGION $ENV)
 
 }
 
 register_definition() {
-    if revision=$(aws ecs register-task-definition --container-definitions "$task_def" --family $family --requires-compatibilities "[\"EC2\", \"FARGATE\"]" --network-mode "awsvpc"  --execution-role-arn "arn:aws:iam::$AWS_ACCOUNT_ID:role/ecsTaskExecutionRole" --cpu "1024" --memory "2048" | $JQ '.taskDefinition.taskDefinitionArn'); then
+    if revision=$(aws ecs register-task-definition --cli-input-json "$task_def" | $JQ '.taskDefinition.taskDefinitionArn'); then
         echo "Revision: $revision"
     else
         echo "Failed to register task definition"
