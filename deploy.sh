@@ -96,7 +96,7 @@ deploy_cluster() {
 
 make_task_def(){
 	task_template='{
-   "family": "%s"
+   "family": "%s",
    "requiresCompatibilities": ["EC2", "FARGATE"],
    "networkMode": "awsvpc",
    "executionRoleArn": "arn:aws:iam::%s:role/ecsTaskExecutionRole",
