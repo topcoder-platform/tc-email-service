@@ -186,7 +186,7 @@ make_task_def(){
 }
 
 register_definition() {
-    if revision=$(aws ecs register-task-definition --container-definitions "$task_def" --family $family --requires-compatibilities "[\"EC2\", \"FARGATE\"]" --network-mode "awsvpc"  --execution-role-arn "arn:aws:iam::$AWS_ACCOUNT_ID:role/ecsTaskExecutionRole" --cpu "1024" | $JQ '.taskDefinition.taskDefinitionArn'); then
+    if revision=$(aws ecs register-task-definition --container-definitions "$task_def" --family $family --requires-compatibilities "[\"EC2\", \"FARGATE\"]" --network-mode "awsvpc"  --execution-role-arn "arn:aws:iam::$AWS_ACCOUNT_ID:role/ecsTaskExecutionRole" --cpu "1024" --memory "2048" | $JQ '.taskDefinition.taskDefinitionArn'); then
         echo "Revision: $revision"
     else
         echo "Failed to register task definition"
