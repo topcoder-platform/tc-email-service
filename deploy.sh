@@ -33,6 +33,35 @@ AWS_ECS_SERVICE=$(eval "echo \$${ENV}_AWS_ECS_SERVICE")
 family=$(eval "echo \$${ENV}_AWS_ECS_TASK_FAMILY")
 AWS_ECS_CONTAINER_NAME=$(eval "echo \$${ENV}_AWS_ECS_CONTAINER_NAME")
 
+
+AUTHDOMAIN=$(eval "echo \$${ENV}_AUTHDOMAIN")
+AUTHSECRET=$(eval "echo \$${ENV}_AUTHSECRET")
+VALIDISSUERS=$(eval "echo \$${ENV}_VALIDISSUERS")
+
+KAFKA_CLIENT_CERT=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT")
+KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
+KAFKA_URL=$(eval "echo \$${ENV}_KAFKA_URL")
+SENDGRID_API_KEY=$(eval "echo \$${ENV}_SENDGRID_API_KEY")
+
+
+DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
+DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
+DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
+DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
+DB_USER=$(eval "echo \$${ENV}_DB_USER")
+DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
+
+# following can have in config file 
+
+KAFKA_GROUP_ID=$(eval "echo \$${ENV}_KAFKA_GROUP_ID")
+EMAIL_FROM=$(eval "echo \$${ENV}_EMAIL_FROM")
+LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
+NODE_ENV=$(eval "echo \$${ENV}_NODE_ENV")
+NODE_PORT=$(eval "echo \$${ENV}_NODE_PORT")
+JWKSURI=$(eval "echo \$${ENV}_JWKSURI")
+TEMPLATE_MAP=$(eval "echo \$${ENV}_TEMPLATE_MAP")
+
+
 configure_aws_cli() {
 	aws --version
 	aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
