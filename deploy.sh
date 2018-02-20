@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 set -eo pipefail
 
 # more bash-friendly output for jq
@@ -34,9 +35,9 @@ family=$(eval "echo \$${ENV}_AWS_ECS_TASK_FAMILY")
 AWS_ECS_CONTAINER_NAME=$(eval "echo \$${ENV}_AWS_ECS_CONTAINER_NAME")
 
 
-AUTHDOMAIN=$(eval "echo \$${ENV}_AUTHDOMAIN")
-AUTHSECRET=$(eval "echo \$${ENV}_AUTHSECRET")
-VALIDISSUERS=$(eval "echo \$${ENV}_VALIDISSUERS")
+AUTH_DOMAIN=$(eval "echo \$${ENV}_AUTHDOMAIN")
+AUTH_SECRET=$(eval "echo \$${ENV}_AUTHSECRET")
+VALID_ISSUERS=$(eval "echo \$${ENV}_VALIDISSUERS")
 
 KAFKA_CLIENT_CERT=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT")
 KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
@@ -58,7 +59,7 @@ EMAIL_FROM=$(eval "echo \$${ENV}_EMAIL_FROM")
 LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
 NODE_ENV=$(eval "echo \$${ENV}_NODE_ENV")
 NODE_PORT=$(eval "echo \$${ENV}_NODE_PORT")
-JWKSURI=$(eval "echo \$${ENV}_JWKSURI")
+JWKS_URI=$(eval "echo \$${ENV}_JWKSURI")
 TEMPLATE_MAP=$(eval "echo \$${ENV}_TEMPLATE_MAP")
 
 
@@ -96,24 +97,93 @@ deploy_cluster() {
 }
 
 make_task_def(){
-	task_template='[
-		{
-				"name": "%s",
-				"image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
-				"essential": true,
-				"memory": 300,
-				"cpu": 100,
-				"portMappings": [
-						{
-								"hostPort": 0,
-								"containerPort": 6100,
-								"protocol": "tcp"
-						}
-				]
-		}
-	]'
+	task_template='[{
+      "name": "%s",
+      "memory": 1000,
+      "cpu" : 0,
+      "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
+      "environment": [
+        {
+          "name" : "ENV",
+          "value" : "%s"
+        },
+        {
+          "name": "authDomain",
+          "value": "%s"
+        },
+        {
+          "name": "authSecret",
+          "value": "%s"
+        },
+        {
+          "name": "DATABASE_URL",
+          "value": "%s"
+        },
+        {
+          "name": "EMAIL_FROM",
+          "value": "%s"
+        },
+        {
+          "name": "jwksUri",
+          "value": "%s"
+        },
+        {
+          "name": "KAFKA_CLIENT_CERT",
+          "value": "%s"
+        },
+        {
+          "name": "KAFKA_CLIENT_CERT_KEY",
+          "value": "%s"
+        },
+        {
+          "name": "KAFKA_GROUP_ID",
+          "value": "%s"
+        },
+        {
+          "name": "KAFKA_URL",
+          "value": "%s"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "%s"
+        },
+        {
+          "name": "PORT",
+          "value": "%s"
+        },
+        {
+          "name": "SENDGRID_API_KEY",
+          "value": "%s"
+        },
+        {
+          "name": "TEMPLATE_MAP",
+          "value": "%s"
+        },
+        {
+          "name": "validIssuers",
+          "value": "%s"
+        }
+      ],
+      "portMappings": [
+        {
+          "hostPort": "%s",
+          "protocol": "tcp",
+          "containerPort": "%s"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/aws/ecs/%s",
+          "awslogs-region": "%s",
+          "awslogs-stream-prefix": "%s"
+        }
+      }
+    }
+  ]'
 	
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG)
+  task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AUTH_DOMAIN $AUTH_SECRET $DATABASE_URL $EMAIL_FORM $JWKS_URI "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $LOG_LEVEL $PORT $SENDGRID_API_KEY "$TEMPLATE_MAP" "$VALID_ISSUERS" $PORT $PORT $AWS_ECS_CLUSTER $AWS_REGION $ENV)
+
 }
 
 register_definition() {
@@ -147,6 +217,6 @@ check_service_status() {
 
 configure_aws_cli
 push_ecr_image
-#deploy_cluster
-#check_service_status
+deploy_cluster
+check_service_status
 
