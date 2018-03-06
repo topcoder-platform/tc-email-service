@@ -15,7 +15,7 @@ jobs:
 
       # Restoration of node_modules from cache.
       - restore_cache:
-          key: docker-tc-email-service-{{ checksum "package.json" }}
+          key: docker-tc-email-service-{{ checksum "package-lock.json" }}
 
       # Build of Docker image.
       - run:
@@ -24,7 +24,7 @@ jobs:
 
       # Caching node modules.
       - save_cache:
-          key: docker-tc-email-service-{{ checksum "package.json" }}
+          key: docker-tc-email-service-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
 
@@ -82,5 +82,5 @@ workflows:
       - "build-dev-deploy-test":
           filters:
             branches:
-              only: "tc-email-delta-patch"
+              only: "dev"
 
