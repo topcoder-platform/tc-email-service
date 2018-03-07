@@ -18,6 +18,8 @@ const logger = require('./common/logger');
 const errors = require('./common/errors');
 const models = require('./models');
 
+let emailTries = {};
+
 /**
  * Configure Kafka consumer.
  * @param {Object} handlers the handlers
@@ -30,12 +32,7 @@ function configureKafkaConsumer(handlers) {
   }
   const pauseTime = parseInt(config.EMAIL_PAUSE_TIME);
   const maxErrors = parseInt(config.EMAIL_MAX_ERRORS);
-
-  // email tries
-  let emailTries = 0;
-
-  // Kafka Consumer
-  const consumer = new Kafka.GroupConsumer(options);
+  const consumer = new Kafka.SimpleConsumer(options);
 
   // data handler
   const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (m) => {
@@ -53,11 +50,10 @@ function configureKafkaConsumer(handlers) {
       // return null to ignore this message
       return null;
     }
-
     let emailModel = {};
     const messageJSON = JSON.parse(message);
     const handlerAsync = Promise.promisify(handler);
-
+    // use handler to create notification instances for each recipient
     return models.Email.create(
       Object.assign({ status: 'PENDING' }, {
         topicName,
@@ -76,23 +72,23 @@ function configureKafkaConsumer(handlers) {
         status: result.success ? 'Message accepted' : 'Message rejected',
       });
       if (result.success) {
-        emailTries = 0;
+        emailTries[topicName] = 0;
         emailModel.status = 'SUCCESS';
         return emailModel.save();
       } else {
-        emailTries += 1;
+        emailTries[topicName] += 1;
         emailModel.status = 'FAILED';
         return emailModel.save().then(() => {
-          const currentTries = emailTries;
+          const currentTries = emailTries[topicName];
           if (currentTries > maxErrors) {
             logger.debug(`Failed to send email. Will sleep for ${pauseTime}s`);
-            emailTries = 0;
+            emailTries[topicName] = 0;
 
             schedule.scheduleJob(new Date(now.getTime() + pauseTime * 1000), () => {
-              return startKafkaConsumer(consumer, handlers, dataHandler);
+              consumer.subscribe(topic, dataHandler);
             });
 
-            return consumer.end().then(() => {
+            return consumer.unsubscribe(topic, partition).then(() => {
               throw result.error
             });
           } else {
