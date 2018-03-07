@@ -26,7 +26,8 @@ const handler = (topic, message, callback) => {
     return callback(null, { success: false, error: `Template not found for topic ${topic}` });
   }
 
-  service.sendEmail(templateId, message.recipients, message.data).then(() => {
+  const replyTo = message.replyTo ? message.replyTo : config.EMAIL_FROM;
+  service.sendEmail(templateId, message.recipients, message.data, replyTo).then(() => {
     callback(null, { success: true });
   }).catch((err) => {
     callback(null, { success: false, error: err });
