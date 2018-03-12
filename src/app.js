@@ -145,8 +145,8 @@ function retryEmail(handlers) {
         return handlerAsync(m.topicName, messageJSON).then((result) => { // save email
           if (result.success) {
             logger.info(`Email model with ${m.id} was sent correctly`);
-            emailModel.status = 'SUCCESS';
-            return emailModel.save();
+            m.status = 'SUCCESS';
+            return m.save();
           }
           logger.info(`Email model with ${m.id} wasn't sent correctly`);
           return m;
