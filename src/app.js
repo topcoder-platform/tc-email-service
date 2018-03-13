@@ -76,9 +76,14 @@ function configureKafkaConsumer(handlers) {
         emailModel.status = 'SUCCESS';
         return emailModel.save();
       } else {
-        emailTries[topicName] += 1;
+        // emailTries[topicName] += 1; //temporary disabling this feature 
         emailModel.status = 'FAILED';
         return emailModel.save().then(() => {
+	 /* 
+	  * temporary disabling this feature as there is chance of losing message during
+	  * unsubscribe/pausing due to simple kafka consumer
+         */ 	
+	  /*	
           const currentTries = emailTries[topicName];
           if (currentTries > maxErrors) {
             logger.debug(`Failed to send email. Will sleep for ${pauseTime}s`);
@@ -94,7 +99,7 @@ function configureKafkaConsumer(handlers) {
           } else {
             logger.debug(`Failed to send email (retries left ${maxErrors - currentTries})`);
             throw result.error;
-          }
+          }*/ 
         });
       }
     }).then(() => consumer.commitOffset({ topic, partition, offset: m.offset })) // commit offset

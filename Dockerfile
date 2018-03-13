@@ -9,5 +9,5 @@ WORKDIR /opt/app
 COPY . .
 RUN npm install
 RUN npm install dotenv --save
-#RUN npm test
+RUN npm run lint
 CMD ["npm", "start"]

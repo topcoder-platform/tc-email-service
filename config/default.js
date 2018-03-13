@@ -33,8 +33,11 @@ module.exports = {
   TEMPLATE_MAP: process.env.TEMPLATE_MAP,
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '',
   EMAIL_FROM: process.env.EMAIL_FROM || 'no-reply@topcoder.com',
+  
+  // temporary not in use feature
   EMAIL_MAX_ERRORS: process.env.EMAIL_MAX_ERRORS || 2,
   EMAIL_PAUSE_TIME: process.env.EMAIL_PAUSE_TIME || 30,
+
   //in every 2 minutes will retry for failed status
   EMAIL_RETRY_SCHEDULE: process.env.EMAIL_RETRY_SCHEDULE || '0 */2 * * * *',
 };
