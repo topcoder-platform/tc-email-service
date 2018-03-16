@@ -2,7 +2,7 @@ version: 2
 
 jobs:
   # Build & Deploy against development backend rer
-  "build-dev-deploy-test":
+  "build-dev":
     docker:
       - image: docker:17.06.1-ce-git
     steps:
@@ -78,9 +78,13 @@ workflows:
   version: 2
   build:
     jobs:
-      # Development builds are executed on "develop" branch only.
-      - "build-dev-deploy-test":
+      # Development builds are executed on "dev" branch only.
+      - "build-dev":
           filters:
             branches:
               only: "dev"
-
+      # Production builds are executed on "master" branch only.
+      - "build-prod":
+          filters:
+            branches:
+              only: "master"
