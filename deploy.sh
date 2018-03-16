@@ -63,7 +63,7 @@ TEMPLATE_MAP=$(eval "echo \$${ENV}_TEMPLATE_MAP")
 
 EMAIL_MAX_ERRORS=$(eval "echo \$${ENV}_EMAIL_MAX_ERRORS")
 EMAIL_PAUSE_TIME=$(eval "echo \$${ENV}_EMAIL_PAUSE_TIME")
-EMAIL_RETRY_SCHEDULE=$(eval "echo \$${ENV}_EMAIL_RETRY_SCHEDULE")
+EMAIL_RETRY_SCHEDULE=$(eval "echo \"\$${ENV}_EMAIL_RETRY_SCHEDULE\"")
 DISABLE_LOGGING=$(eval "echo \$${ENV}_DISABLE_LOGGING")
 
 configure_aws_cli() {
