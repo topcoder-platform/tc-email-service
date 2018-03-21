@@ -2,9 +2,9 @@
 
 const config = require('config');
 
-var routes = {};
+const routes = {};
 
-let oldkeyEventType = '/email/templates/eventType/:name';
+const oldkeyEventType = '/email/templates/eventType/:name'
 routes[oldkeyEventType] = {
   get: {
     controller: 'TemplateController',
@@ -12,7 +12,7 @@ routes[oldkeyEventType] = {
   }
 };
 
-let oldkeyHealthCheck = '/email/health';
+const oldkeyHealthCheck = '/email/health'
 routes[oldkeyHealthCheck] = {
   get: {
     controller: 'HealthController',
@@ -20,7 +20,7 @@ routes[oldkeyHealthCheck] = {
   }
 };
 
-let keyEventType = `${config.API_VERSION}/${config.API_CONTEXT_PATH}/templates/eventType/:name`;
+const keyEventType = `${config.API_CONTEXT_PATH}/${config.API_VERSION}/templates/eventType/:name`;
 routes[keyEventType] = {
   get: {
     controller: 'TemplateController',
@@ -28,7 +28,7 @@ routes[keyEventType] = {
   }
 };
 
-let keyHealthCheck = `${config.API_VERSION}/${config.API_CONTEXT_PATH}/health`;
+const keyHealthCheck = `${config.API_CONTEXT_PATH}/${config.API_VERSION}/health`;
 routes[keyHealthCheck] = {
   get: {
     controller: 'HealthController',

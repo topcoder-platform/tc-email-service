@@ -190,7 +190,7 @@ function start(handlers) {
         next();
       });
       if ((url !== '/email/health')
-        && (url !== `${config.API_VERSION}/${config.API_CONTEXT_PATH}/health`)) {
+        && (url !== `${config.API_CONTEXT_PATH}/${config.API_VERSION}/health`)) {
         actions.push(jwtAuth());
         actions.push((req, res, next) => {
           if (!req.authUser) {
