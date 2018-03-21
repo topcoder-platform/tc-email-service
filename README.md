@@ -2,7 +2,7 @@
 
 
 ## Dependencies
-- nodejs https://nodejs.org/en/ (v8+)
+- nodejs https://nodejs.org/en/ (v6+)
 - Heroku Toolbelt https://toolbelt.heroku.com
 - git
 - PostgreSQL 9.5
