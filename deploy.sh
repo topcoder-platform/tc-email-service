@@ -66,6 +66,9 @@ EMAIL_PAUSE_TIME=$(eval "echo \$${ENV}_EMAIL_PAUSE_TIME")
 EMAIL_RETRY_SCHEDULE=$(eval "echo \"\$${ENV}_EMAIL_RETRY_SCHEDULE\"")
 DISABLE_LOGGING=$(eval "echo \$${ENV}_DISABLE_LOGGING")
 
+API_CONTEXT_PATH=$(eval "echo \$${ENV}_API_CONTEXT_PATH")
+API_VERSION=$(eval "echo \$${ENV}_API_VERSION")
+
 configure_aws_cli() {
 	aws --version
 	aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
@@ -188,6 +191,14 @@ make_task_def(){
         {
           "name": "DISABLE_LOGGING",
           "value": "%s"
+        },
+        {
+          "name": "API_CONTEXT_PATH",
+          "value": "%s"
+        },
+        {
+          "name": "API_VERSION",
+          "value": "%s"
         }
       ],
       "portMappings": [
@@ -209,7 +220,7 @@ make_task_def(){
   ]
   }'
 	
-  task_def=$(printf "$task_template" $family $AWS_ACCOUNT_ID $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AUTH_DOMAIN $AUTH_SECRET $DATABASE_URL $EMAIL_FROM "$JWKS_URI" "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $LOG_LEVEL $PORT $SENDGRID_API_KEY "$TEMPLATE_MAP" "$VALID_ISSUERS" $EMAIL_MAX_ERRORS $EMAIL_PAUSE_TIME "$EMAIL_RETRY_SCHEDULE" "$DISABLE_LOGGING" $PORT $PORT $AWS_ECS_CLUSTER $AWS_REGION $ENV)
+  task_def=$(printf "$task_template" $family $AWS_ACCOUNT_ID $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AUTH_DOMAIN $AUTH_SECRET $DATABASE_URL $EMAIL_FROM "$JWKS_URI" "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $LOG_LEVEL $PORT $SENDGRID_API_KEY "$TEMPLATE_MAP" "$VALID_ISSUERS" $EMAIL_MAX_ERRORS $EMAIL_PAUSE_TIME "$EMAIL_RETRY_SCHEDULE" "$DISABLE_LOGGING" "$API_CONTEXT_PATH" "$API_VERSION" $PORT $PORT $AWS_ECS_CLUSTER $AWS_REGION $ENV)
 
 }
 
