@@ -20,7 +20,7 @@ routes[oldkeyHealthCheck] = {
   }
 };
 
-let keyEventType = `/${config.API_VERSION}/${config.API_CONTEXT_PATH}/templates/eventType/:name`;
+let keyEventType = `${config.API_VERSION}/${config.API_CONTEXT_PATH}/templates/eventType/:name`;
 routes[keyEventType] = {
   get: {
     controller: 'TemplateController',
@@ -28,7 +28,7 @@ routes[keyEventType] = {
   }
 };
 
-let keyHealthCheck = `/${config.API_VERSION}/${config.API_CONTEXT_PATH}/health`;
+let keyHealthCheck = `${config.API_VERSION}/${config.API_CONTEXT_PATH}/health`;
 routes[keyHealthCheck] = {
   get: {
     controller: 'HealthController',
