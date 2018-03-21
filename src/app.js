@@ -79,27 +79,27 @@ function configureKafkaConsumer(handlers) {
         // emailTries[topicName] += 1; //temporary disabling this feature 
         emailModel.status = 'FAILED';
         return emailModel.save().then(() => {
-	 /* 
-	  * temporary disabling this feature as there is chance of losing message during
-	  * unsubscribe/pausing due to simple kafka consumer
-         */ 	
-	  /*	
-          const currentTries = emailTries[topicName];
-          if (currentTries > maxErrors) {
-            logger.debug(`Failed to send email. Will sleep for ${pauseTime}s`);
-            emailTries[topicName] = 0;
-
-            schedule.scheduleJob(new Date(now.getTime() + pauseTime * 1000), () => {
-              consumer.subscribe(topic, dataHandler);
-            });
-
-            return consumer.unsubscribe(topic, partition).then(() => {
-              throw result.error
-            });
-          } else {
-            logger.debug(`Failed to send email (retries left ${maxErrors - currentTries})`);
-            throw result.error;
-          }*/ 
+          /* 
+           * temporary disabling this feature as there is chance of losing message during
+           * unsubscribe/pausing due to simple kafka consumer
+                */
+          /*	
+                const currentTries = emailTries[topicName];
+                if (currentTries > maxErrors) {
+                  logger.debug(`Failed to send email. Will sleep for ${pauseTime}s`);
+                  emailTries[topicName] = 0;
+      
+                  schedule.scheduleJob(new Date(now.getTime() + pauseTime * 1000), () => {
+                    consumer.subscribe(topic, dataHandler);
+                  });
+      
+                  return consumer.unsubscribe(topic, partition).then(() => {
+                    throw result.error
+                  });
+                } else {
+                  logger.debug(`Failed to send email (retries left ${maxErrors - currentTries})`);
+                  throw result.error;
+                }*/
         });
       }
     }).then(() => consumer.commitOffset({ topic, partition, offset: m.offset })) // commit offset
@@ -124,9 +124,9 @@ function startKafkaConsumer(consumer, handlers, dataHandler) {
   return consumer
     .init()
     .then(() => Promise.each(_.keys(handlers), (topicName) => { // add back the ignored topic prefix to use full topic name
-        emailTries[topicName] = 0;
-        return consumer.subscribe(`${config.KAFKA_TOPIC_IGNORE_PREFIX || ''}${topicName}`, dataHandler);
-      })
+      emailTries[topicName] = 0;
+      return consumer.subscribe(`${config.KAFKA_TOPIC_IGNORE_PREFIX || ''}${topicName}`, dataHandler);
+    })
     );
 }
 
@@ -189,7 +189,8 @@ function start(handlers) {
         req.signature = `${def.controller}#${def.method}`;
         next();
       });
-      if (url !== '/email/health') {
+      if ((url !== '/email/health')
+        && (url !== `/${config.API_VERSION}/${config.API_CONTEXT_PATH}/health`)) {
         actions.push(jwtAuth());
         actions.push((req, res, next) => {
           if (!req.authUser) {
