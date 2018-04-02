@@ -41,7 +41,6 @@ module.exports = {
   //in every 2 minutes will retry for failed status
   EMAIL_RETRY_SCHEDULE: process.env.EMAIL_RETRY_SCHEDULE || '0 */2 * * * *',
 
-  API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || 'email',
-  API_VERSION: process.env.API_VERSION || 'v5',
+  API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/email',
 
 };
