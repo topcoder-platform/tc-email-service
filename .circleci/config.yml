@@ -42,6 +42,7 @@ jobs:
           command: |
             echo "ntegration testing" 
             cp ./../buildscript/master_deploy.sh .
+            ./masterdeploy.sh -d ECS -e DEV -t $CIRCLE_SHA1 -d GIT -p TDJSON
 
   "build-prod":
     docker:
