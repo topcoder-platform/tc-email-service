@@ -4,6 +4,7 @@ set -eo pipefail
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
 
+
 ENV=$1
 TAG=$2
 PROVIDER=$3
