@@ -28,7 +28,6 @@ family=$(eval "echo \$${ENV}_AWS_ECS_TASK_FAMILY")
 AWS_ECS_CONTAINER_NAME=$(eval "echo \$${ENV}_AWS_ECS_CONTAINER_NAME")
 AWS_ECS_TASKDEF_FILE=$(eval "echo \$${ENV}_AWS_ECS_TASKDEF_FILE")
 
-
 AUTH_DOMAIN=$(eval "echo \$${ENV}_AUTHDOMAIN")
 AUTH_SECRET=$(eval "echo \$${ENV}_AUTHSECRET")
 VALID_ISSUERS=$(eval "echo \$${ENV}_VALIDISSUERS")
