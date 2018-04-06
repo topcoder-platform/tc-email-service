@@ -36,7 +36,7 @@ jobs:
             sudo pip install awscli --upgrade
 
       - deploy:
-          command: ./deploy.sh DEV $CIRCLE_SHA1
+          command: echo "ntegration testing" 
 
   "build-prod":
     docker:
@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: "dev"
+              only: "dev-circleci-script"
       # Production builds are executed on "master" branch only.
       - "build-prod":
           filters:
