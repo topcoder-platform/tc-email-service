@@ -8,7 +8,7 @@ jobs:
     steps:
       # Initialization.
       - run:
-           name: checking out build repo
+          name: checking out build repo
           command: git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
       - checkout
       - setup_remote_docker
