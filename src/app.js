@@ -51,7 +51,8 @@ function configureKafkaConsumer(handlers) {
       return null;
     }
     let emailModel = {};
-    const messageJSON = JSON.parse(message);
+    const busPayload = JSON.parse(message);
+    const messageJSON = busPayload.payload;
     const handlerAsync = Promise.promisify(handler);
     // use handler to create notification instances for each recipient
     return models.Email.create(
