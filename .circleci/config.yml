@@ -7,6 +7,9 @@ jobs:
       - image: docker:17.06.1-ce-git
     steps:
       # Initialization.
+      - run:
+           name: checking out build repo
+          command: git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
       - checkout
       - setup_remote_docker
       - run:
@@ -36,7 +39,9 @@ jobs:
             sudo pip install awscli --upgrade
 
       - deploy:
-          command: echo "ntegration testing" 
+          command: |
+            echo "ntegration testing" 
+            cp ./../buildscript/master_deploy.sh .
 
   "build-prod":
     docker:

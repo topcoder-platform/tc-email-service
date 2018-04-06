@@ -8,6 +8,13 @@ set -eo pipefail
 NODE_ENV=$1
 
 ENV=$1
+
+source buildvar.conf
+SECRET_FILE_NAME="${APPNAME}-buildsecvar.conf"
+cp ./../buildscript/$APPNAME/$SECRET_FILE_NAME .
+ccdecrypt -f $SECRET_FILE_NAME.cpt -K $SECPASSWD
+source $SECRET_FILE_NAME
+
 AWS_REGION=$(eval "echo \$${ENV}_AWS_REGION")
 AWS_ACCESS_KEY_ID=$(eval "echo \$${ENV}_AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY=$(eval "echo \$${ENV}_AWS_SECRET_ACCESS_KEY")
