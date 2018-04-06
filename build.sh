@@ -11,8 +11,9 @@ ENV=$1
 
 source buildvar.conf
 SECRET_FILE_NAME="${APPNAME}-buildsecvar.conf"
-cp ./../buildscript/$APPNAME/$SECRET_FILE_NAME.cpt .
-ccdecrypt -f $SECRET_FILE_NAME.cpt -K $SECPASSWD
+cp ./../buildscript/$APPNAME/$SECRET_FILE_NAME.enc .
+#ccdecrypt -f $SECRET_FILE_NAME.cpt -K $SECPASSWD
+openssl enc -aes-256-cbc -d -in $SECRET_FILE_NAME.enc -out $SECRET_FILE_NAME -k $SECPASSWD
 source $SECRET_FILE_NAME
 
 AWS_REGION=$(eval "echo \$${ENV}_AWS_REGION")
