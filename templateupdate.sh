@@ -38,7 +38,6 @@ KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
 KAFKA_URL=$(eval "echo \$${ENV}_KAFKA_URL")
 SENDGRID_API_KEY=$(eval "echo \$${ENV}_SENDGRID_API_KEY")
 
-
 DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
 DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
 DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
