@@ -51,7 +51,8 @@ function configureKafkaConsumer(handlers) {
       return null;
     }
     let emailModel = {};
-    const messageJSON = JSON.parse(message);
+    const busPayload = JSON.parse(message);
+    const messageJSON = busPayload.payload;
     const handlerAsync = Promise.promisify(handler);
     // use handler to create notification instances for each recipient
     return models.Email.create(
@@ -189,7 +190,7 @@ function start(handlers) {
         req.signature = `${def.controller}#${def.method}`;
         next();
       });
-      if (url !== '/email/health') {
+      if (url !== '/health') {
         actions.push(jwtAuth());
         actions.push((req, res, next) => {
           if (!req.authUser) {
@@ -204,7 +205,7 @@ function start(handlers) {
     });
   });
 
-  app.use('/', apiRouter);
+  app.use(config.API_CONTEXT_PATH, apiRouter);
 
   app.use((req, res) => {
     res.status(404).json({ error: 'route not found' });
