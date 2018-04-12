@@ -7,11 +7,14 @@ jobs:
       - image: docker:17.06.1-ce-git
     steps:
       # Initialization.
+      - run:
+          name: checking out build repo
+          command: git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
       - checkout
       - setup_remote_docker
       - run:
           name: Installation of build dependencies.
-          command: apk add --no-cache bash
+          command: apk add --no-cache bash openssl
 
       # Restoration of node_modules from cache.
       - restore_cache:
@@ -36,7 +39,10 @@ jobs:
             sudo pip install awscli --upgrade
 
       - deploy:
-          command: ./deploy.sh DEV $CIRCLE_SHA1
+          command: |
+            echo "ntegration testing" 
+            cp ./../buildscript/master_deploy.sh .
+            ./master_deploy.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s GIT -p TDJSON
 
   "build-prod":
     docker:
@@ -82,7 +88,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: "dev"
+              only: "dev-circleci-script"
       # Production builds are executed on "master" branch only.
       - "build-prod":
           filters:
