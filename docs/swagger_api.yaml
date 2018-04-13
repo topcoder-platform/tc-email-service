@@ -4,8 +4,9 @@ info:
   description: "TOPCODER EMAIL SERIES - EMAIL SERVER"
   version: "1.0.0"
 host: "localhost:4001"
+basePath : "/v5/email"
 schemes:
-- "http"
+- "https"
 securityDefinitions:
   jwt:
     type: apiKey
@@ -14,7 +15,7 @@ securityDefinitions:
     description: JWT Authentication. Provide API Key in the form 'Bearer &lt;token&gt;'.
 
 paths:
-  /templates/eventType/{name}:
+  /templates/{name}:
     get:
       description:
         get email template placholders name
