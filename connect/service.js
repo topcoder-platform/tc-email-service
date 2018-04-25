@@ -9,16 +9,24 @@ const config = require('config');
 // set api key for SendGrid email client
 sgMail.setApiKey(config.SENDGRID_API_KEY);
 
-const sendEmail = (templateId, to, substitutions, replyTo) => // send email
-  sgMail.send({
+const sendEmail = (templateId, message) => { // send email
+
+  const from = message.from ? message.from : config.EMAIL_FROM;
+  const replyTo = message.replyTo ? message.replyTo : config.EMAIL_FROM;
+  const substitutions = message.data ;
+  const categories = message.categories ? message.categories: [];
+  const to = message.recipients;
+
+  return  sgMail.send({
     to,
     templateId,
     substitutions,
-    from: config.EMAIL_FROM,
+    from,
     substitutionWrappers: ['{{', '}}'],
     replyTo,
+    categories,
   });
-
+}
 module.exports = {
   sendEmail,
 }

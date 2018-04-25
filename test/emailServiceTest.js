@@ -24,8 +24,7 @@ const defaultHandler = (topic, message, callback) => {
   }
 
   // send email
-  const replyTo = message.replyTo ? message.replyTo : config.EMAIL_FROM;
-  service.sendEmail(templateId, message.recipients, message.data).then(() => {
+  service.sendEmail(templateId, message).then(() => {
     callback(null, { success: true });
     finish(null);
   }).catch((err) => {
