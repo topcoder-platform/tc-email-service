@@ -3,7 +3,7 @@ info:
   title: "TOPCODER EMAIL SERIES - EMAIL SERVER"
   description: "TOPCODER EMAIL SERIES - EMAIL SERVER"
   version: "1.0.0"
-host: "localhost:4001"
+host: "localhost:6100"
 basePath : "/v5/email"
 schemes:
 - "https"
