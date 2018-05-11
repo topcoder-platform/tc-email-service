@@ -4,9 +4,7 @@
 module.exports = {
   LOG_LEVEL: process.env.LOG_LEVEL,
   PORT: process.env.PORT,
-  authSecret: process.env.authSecret,
-  authDomain: process.env.authDomain,
-  jwksUri: process.env.jwksUri,
+  AUTH_SECRET: process.env.AUTH_SECRET,
   DATABASE_URL: process.env.DATABASE_URL,
   DATABASE_OPTIONS: {
     dialect: 'postgres',
@@ -21,7 +19,7 @@ module.exports = {
   },
   DISABLE_LOGGING: process.env.DISABLE_LOGGING || 'false',
 
-  validIssuers: process.env.validIssuers ? process.env.validIssuers.replace(/\\"/g, '') : null,
+  VALID_ISSUERS: process.env.VALID_ISSUERS,
   KAFKA_URL: process.env.KAFKA_URL,
   KAFKA_TOPIC_IGNORE_PREFIX: process.env.KAFKA_TOPIC_IGNORE_PREFIX,
   KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID,
