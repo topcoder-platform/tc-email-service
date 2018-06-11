@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: ["dev", 'feature/m2m-support']
+              only: ["dev"]
       # Production builds are executed on "master" branch only.
       - "build-prod":
           filters:
