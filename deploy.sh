@@ -34,7 +34,6 @@ family=$(eval "echo \$${ENV}_AWS_ECS_TASK_FAMILY")
 AWS_ECS_CONTAINER_NAME=$(eval "echo \$${ENV}_AWS_ECS_CONTAINER_NAME")
 
 
-AUTH_DOMAIN=$(eval "echo \$${ENV}_AUTHDOMAIN")
 AUTH_SECRET=$(eval "echo \$${ENV}_AUTHSECRET")
 VALID_ISSUERS=$(eval "echo \$${ENV}_VALIDISSUERS")
 
@@ -58,7 +57,6 @@ EMAIL_FROM=$(eval "echo \$${ENV}_EMAIL_FROM")
 LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
 NODE_ENV=$(eval "echo \$${ENV}_NODE_ENV")
 PORT=$(eval "echo \$${ENV}_NODE_PORT")
-JWKS_URI=$(eval "echo \$${ENV}_JWKSURI")
 TEMPLATE_MAP=$(eval "echo \$${ENV}_TEMPLATE_MAP")
 
 EMAIL_MAX_ERRORS=$(eval "echo \$${ENV}_EMAIL_MAX_ERRORS")
@@ -120,11 +118,7 @@ make_task_def(){
           "value" : "%s"
         },
         {
-          "name": "authDomain",
-          "value": "%s"
-        },
-        {
-          "name": "authSecret",
+          "name": "AUTH_SECRET",
           "value": "%s"
         },
         {
@@ -133,10 +127,6 @@ make_task_def(){
         },
         {
           "name": "EMAIL_FROM",
-          "value": "%s"
-        },
-        {
-          "name": "jwksUri",
           "value": "%s"
         },
         {
@@ -172,7 +162,7 @@ make_task_def(){
           "value": "%s"
         },
         {
-          "name": "validIssuers",
+          "name": "VALID_ISSUERS",
           "value": "%s"
         },
         {
@@ -215,7 +205,7 @@ make_task_def(){
   ]
   }'
 	
-  task_def=$(printf "$task_template" $family $AWS_ACCOUNT_ID $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AUTH_DOMAIN $AUTH_SECRET $DATABASE_URL $EMAIL_FROM "$JWKS_URI" "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $LOG_LEVEL $PORT $SENDGRID_API_KEY "$TEMPLATE_MAP" "$VALID_ISSUERS" $EMAIL_MAX_ERRORS $EMAIL_PAUSE_TIME "$EMAIL_RETRY_SCHEDULE" "$DISABLE_LOGGING" "$API_CONTEXT_PATH" $PORT $PORT $AWS_ECS_CLUSTER $AWS_REGION $ENV)
+  task_def=$(printf "$task_template" $family $AWS_ACCOUNT_ID $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AUTH_SECRET $DATABASE_URL $EMAIL_FROM "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $LOG_LEVEL $PORT $SENDGRID_API_KEY "$TEMPLATE_MAP" "$VALID_ISSUERS" $EMAIL_MAX_ERRORS $EMAIL_PAUSE_TIME "$EMAIL_RETRY_SCHEDULE" "$DISABLE_LOGGING" "$API_CONTEXT_PATH" $PORT $PORT $AWS_ECS_CLUSTER $AWS_REGION $ENV)
 
 }
 
