@@ -68,8 +68,8 @@ function configureKafkaConsumer(handlers) {
       const now = new Date();
       logger.log('info', 'Email sent', {
         sender: 'Connect',
-        from_address: messageJSON.recipients.join(','),
-        to_address: config.EMAIL_FROM,
+        to_address: messageJSON.recipients.join(','),
+        from_address: config.EMAIL_FROM,
         status: result.success ? 'Message accepted' : 'Message rejected',
 	error: result.error ? result.error.toString() : 'No error message',
       });
