@@ -81,11 +81,11 @@ function configureKafkaConsumer(handlers) {
         // emailTries[topicName] += 1; //temporary disabling this feature 
 	if (result.error){
 		//Extract error msg
-    		const {message, code, response} = error;
+    		const {code, response} = result.error;
     		//Extract response msg
     		const {headers, body} = response;
-		logger.log('error','Send email error details',{
-			message,
+		logger.log('error', 'Send email error details', {
+			message : result.error.message,
 			code,
 			response,
 			headers,
