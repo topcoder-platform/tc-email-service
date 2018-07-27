@@ -71,7 +71,7 @@ function configureKafkaConsumer(handlers) {
         from_address: messageJSON.recipients.join(','),
         to_address: config.EMAIL_FROM,
         status: result.success ? 'Message accepted' : 'Message rejected',
-	error: result.error
+	error: result.error ? result.error.toString() : 'No error message',
       });
       if (result.success) {
         emailTries[topicName] = 0;
