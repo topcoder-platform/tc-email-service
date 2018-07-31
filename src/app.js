@@ -80,17 +80,7 @@ function configureKafkaConsumer(handlers) {
       } else {
         // emailTries[topicName] += 1; //temporary disabling this feature 
 	if (result.error){
-		//Extract error msg
-    		const {code, response} = result.error;
-    		//Extract response msg
-    		const {headers, body} = response;
-		logger.log('error', 'Send email error details', {
-			message : result.error.message,
-			code,
-			response,
-			headers,
-			body
-		});
+		logger.log('error', 'Send email error details', result.error);
 	}
         emailModel.status = 'FAILED';
         return emailModel.save().then(() => {
