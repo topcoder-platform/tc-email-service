@@ -22,9 +22,8 @@ const sendEmail = (templateId, message) => { // send email
   return  sgMail.send({
     to,
     templateId,
-    substitutions,
+    dynamicTemplateData: substitutions,
     from,
-    substitutionWrappers: ['{{', '}}'],
     replyTo,
     categories,
     cc,
