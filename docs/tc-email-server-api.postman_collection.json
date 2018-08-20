@@ -1,196 +1,18 @@
 {
+	"variables": [],
 	"info": {
 		"name": "tc-email-server-api",
-		"_postman_id": "f9d855bc-e0a5-3501-ab56-9a144830c431",
+		"_postman_id": "1b69bb54-1908-a951-8597-aa50db53b5ba",
 		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "failure",
-			"description": "",
-			"item": [
-				{
-					"name": "Email  - invalid token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6bbbb6e1-3ef8-4e4e-802e-c6bfd892378c",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Invalid GET request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([403]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "BAD_TOKEN",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{URL}}/email.project.created",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"email.project.created"
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "Email  - invalid topic",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "5a75ca22-fb44-4a40-b6fa-d47f7421465b",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Bad request GET request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([400]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TC_ADMIN_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{URL}}/email.invalid",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"email.invalid"
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "Email  - invalid template",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "2e5a6ff8-bd38-457a-8c94-5cb745e11de5",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Not found GET request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([404]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TC_ADMIN_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{URL}}/email.tempate.invalid",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"email.tempate.invalid"
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "Email  - invalid template version",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "2e5a6ff8-bd38-457a-8c94-5cb745e11de5",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Not found GET request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([404]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TC_ADMIN_TOKEN}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{URL}}/email.template.no.version",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"email.template.no.version"
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Email - project.created",
+			"name": "Health",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "db43bdd5-1b84-42c3-9033-59a8756ab3ba",
 						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Successful GET request\", function () {",
@@ -201,71 +23,10 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{TC_ADMIN_TOKEN}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "{{URL}}/health",
 				"method": "GET",
 				"header": [],
 				"body": {},
-				"url": {
-					"raw": "{{URL}}/email.project.created",
-					"host": [
-						"{{URL}}"
-					],
-					"path": [
-						"email.project.created"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Email - project.updated",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "9732b9ef-c3b0-4ea3-92e3-624f9e84c6e6",
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Successful GET request\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200,204]);",
-							"});"
-						]
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{TC_ADMIN_TOKEN}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "{{URL}}/email.project.updated",
-					"host": [
-						"{{URL}}"
-					],
-					"path": [
-						"email.project.updated"
-					]
-				},
 				"description": ""
 			},
 			"response": []

@@ -38,6 +38,8 @@ module.exports = {
 
   //in every 2 minutes will retry for failed status
   EMAIL_RETRY_SCHEDULE: process.env.EMAIL_RETRY_SCHEDULE || '0 */2 * * * *',
+  //wont't retry failed emails older than this time (msec)
+  EMAIL_RETRY_MAX_AGE: process.env.EMAIL_RETRY_MAX_AGE || 1000*60*60*24,
 
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/email',
 

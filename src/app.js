@@ -140,7 +140,8 @@ function startKafkaConsumer(consumer, handlers, dataHandler) {
  * @param {Object} handlers the handlers
  */
 function retryEmail(handlers) {
-  return models.Email.findAll({ where: { status: 'FAILED' } }).then((models) => {
+  return models.Email.findAll({ where: { status: 'FAILED', createdAt: { $gt: new Date(new Date() - config.EMAIL_RETRY_MAX_AGE) }} })
+    .then((models) => {
     if (models.length > 0) {
       logger.info(`Found ${models.length} e-mails to be resent`);
       return Promise.each(models, (m) => {
