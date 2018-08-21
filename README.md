@@ -13,14 +13,11 @@ Configuration for the notification server is at `config/default.js`.
 The following parameters can be set in config files or in env variables:
 - LOG_LEVEL: the log level
 - PORT: the notification server port
-- authSecret: TC auth secret
-- authDomain: TC auth domain
-- validIssuers: TC auth valid issuers
-- jwksUri: TC auth JWKS URI
+- AUTH_SECRET: TC auth secret
+- VALID_ISSUERS: TC auth valid issuers
 - DATABASE_URL: URI to PostgreSQL database
 - DATABASE_OPTIONS: database connection options
 - KAFKA_URL: comma separated Kafka hosts
-- KAFKA_TOPIC_IGNORE_PREFIX: ignore this prefix for topics in the Kafka
 - KAFKA_GROUP_ID: Kafka consumer group id
 - KAFKA_CLIENT_CERT: Kafka connection certificate, optional;
     if not provided, then SSL connection is not used, direct insecure connection is used;
@@ -59,10 +56,8 @@ In case it expires, you may get a new token in this way:
 
 ## Local deployment
 - for local development environment you can set variables as following:
-  - `authSecret`, `authDomain`, `validIssuers` can get from [tc-project-service config](https://github.com/topcoder-platform/tc-project-service/blob/dev/config/default.json)
+  - `AUTH_SECRET`, `VALID_ISSUERS` can get from [tc-project-service config](https://github.com/topcoder-platform/tc-project-service/blob/dev/config/default.json)
   - `PORT=4001` because **connect-app** call this port by default
-  - `jwksUri` - any
-  - `KAFKA_TOPIC_IGNORE_PREFIX=joan-26673.` (with point at the end)
   - `KAFKA_URL`, `KAFKA_CLIENT_CERT` and `KAFKA_CLIENT_CERT_KEY` get from [tc-bus-api readme](https://github.com/topcoder-platform/tc-bus-api/tree/dev)
 - start local PostgreSQL db, create an empty database, update the config/default.js DATABASE_URL param to point to the db
 - install dependencies `npm i`

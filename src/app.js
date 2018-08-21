@@ -40,9 +40,7 @@ function configureKafkaConsumer(handlers) {
     logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${m.offset}; Message: ${message}.`);
     // ignore configured Kafka topic prefix
     let topicName = topic;
-    if (config.KAFKA_TOPIC_IGNORE_PREFIX && topicName.startsWith(config.KAFKA_TOPIC_IGNORE_PREFIX)) {
-      topicName = topicName.substring(config.KAFKA_TOPIC_IGNORE_PREFIX.length);
-    }
+    
     // find handler
     const handler = handlers[topicName];
     if (!handler) {
@@ -130,7 +128,7 @@ function startKafkaConsumer(consumer, handlers, dataHandler) {
     .init()
     .then(() => Promise.each(_.keys(handlers), (topicName) => { // add back the ignored topic prefix to use full topic name
         emailTries[topicName] = 0;
-        return consumer.subscribe(`${config.KAFKA_TOPIC_IGNORE_PREFIX || ''}${topicName}`, dataHandler);
+        return consumer.subscribe(topicName, dataHandler);
       })
     );
 }
