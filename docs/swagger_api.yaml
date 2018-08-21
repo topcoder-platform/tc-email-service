@@ -15,46 +15,20 @@ securityDefinitions:
     description: JWT Authentication. Provide API Key in the form 'Bearer &lt;token&gt;'.
 
 paths:
-  /templates/{name}:
+  /health:
     get:
       description:
-        get email template placholders name
+        health check endpoint
       produces:
         - application/json
-      security:
-        - jwt: []
-      parameters:
-        - name: name
-          in: path
-          description: The Kafka topic name
-          required: true
-          type: string
       responses:
         200:
           description: OK
           schema:
             type: object
             properties:
-              items:
-                type: array
-                items:
-                  type: string
-        400:
-          description: "Bad request error."
-          schema:
-            $ref: "#/definitions/Error"
-       404:
-         description: "Template is not found error."
-         schema:
-            $ref: "#/definitions/Error"
-        401:
-          description: "Authentication failed."
-          schema:
-            $ref: "#/definitions/Error"
-        500:
-          description: "Internal server error."
-          schema:
-            $ref: "#/definitions/Error"
+              health:
+                type: string
 definitions:
   Error:
     properties:
