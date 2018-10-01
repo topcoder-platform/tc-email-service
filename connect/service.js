@@ -18,18 +18,31 @@ const sendEmail = (templateId, message) => { // send email
   const to = message.recipients;
   const cc =  message.cc ? message.cc : [];
   const bcc = message.bcc ? message.bcc : [];
-
-  return  sgMail.send({
-    to,
-    templateId,
-    substitutions,
-    from,
-    substitutionWrappers: ['{{', '}}'],
-    replyTo,
-    categories,
-    cc,
-    bcc,
-  });
+  
+  if (message.version && message.version=="v3"){
+    return  sgMail.send({
+      to,
+      templateId,
+      dynamicTemplateData: substitutions,
+      from,
+      replyTo,
+      categories,
+      cc,
+      bcc,
+    });
+  } else{
+    return  sgMail.send({
+      to,
+      templateId,
+      substitutions,
+      substitutionWrappers: ['{{', '}}'],
+      from,
+      replyTo,
+      categories,
+      cc,
+      bcc,
+    });
+  }
 }
 module.exports = {
   sendEmail,

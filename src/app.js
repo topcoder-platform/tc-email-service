@@ -40,9 +40,7 @@ function configureKafkaConsumer(handlers) {
     logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${m.offset}; Message: ${message}.`);
     // ignore configured Kafka topic prefix
     let topicName = topic;
-    if (config.KAFKA_TOPIC_IGNORE_PREFIX && topicName.startsWith(config.KAFKA_TOPIC_IGNORE_PREFIX)) {
-      topicName = topicName.substring(config.KAFKA_TOPIC_IGNORE_PREFIX.length);
-    }
+    
     // find handler
     const handler = handlers[topicName];
     if (!handler) {
@@ -68,9 +66,10 @@ function configureKafkaConsumer(handlers) {
       const now = new Date();
       logger.log('info', 'Email sent', {
         sender: 'Connect',
-        from_address: messageJSON.recipients.join(','),
-        to_address: config.EMAIL_FROM,
+        to_address: messageJSON.recipients.join(','),
+        from_address: config.EMAIL_FROM,
         status: result.success ? 'Message accepted' : 'Message rejected',
+	error: result.error ? result.error.toString() : 'No error message',
       });
       if (result.success) {
         emailTries[topicName] = 0;
@@ -78,6 +77,9 @@ function configureKafkaConsumer(handlers) {
         return emailModel.save();
       } else {
         // emailTries[topicName] += 1; //temporary disabling this feature 
+	if (result.error){
+		logger.log('error', 'Send email error details', result.error);
+	}
         emailModel.status = 'FAILED';
         return emailModel.save().then(() => {
 	 /* 
@@ -126,7 +128,7 @@ function startKafkaConsumer(consumer, handlers, dataHandler) {
     .init()
     .then(() => Promise.each(_.keys(handlers), (topicName) => { // add back the ignored topic prefix to use full topic name
         emailTries[topicName] = 0;
-        return consumer.subscribe(`${config.KAFKA_TOPIC_IGNORE_PREFIX || ''}${topicName}`, dataHandler);
+        return consumer.subscribe(topicName, dataHandler);
       })
     );
 }
@@ -136,7 +138,8 @@ function startKafkaConsumer(consumer, handlers, dataHandler) {
  * @param {Object} handlers the handlers
  */
 function retryEmail(handlers) {
-  return models.Email.findAll({ where: { status: 'FAILED' } }).then((models) => {
+  return models.Email.findAll({ where: { status: 'FAILED', createdAt: { $gt: new Date(new Date() - config.EMAIL_RETRY_MAX_AGE) }} })
+    .then((models) => {
     if (models.length > 0) {
       logger.info(`Found ${models.length} e-mails to be resent`);
       return Promise.each(models, (m) => {
