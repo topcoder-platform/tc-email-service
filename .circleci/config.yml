@@ -40,6 +40,9 @@ jobs:
       - setup_remote_docker
       - run: *install_dependency
       - run: *install_deploysuite
+      - run:
+          name: give permission
+          command: chmod -R 777 root/project/
       - restore_cache: *restore_cache_settings_for_build
       - run: *run_build
       - save_cache: *save_cache_settings
