@@ -21,7 +21,10 @@ module.exports = {
 
   VALID_ISSUERS: process.env.VALID_ISSUERS,
   KAFKA_URL: process.env.KAFKA_URL,
-  KAFKA_MAXBYTES: process.env.MAXBYTES || 2097152 /** 2MB /*,
+
+  // max bytes 2MB
+  KAFKA_MAXBYTES: process.env.MAXBYTES || 2097152,
+
   KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID,
   KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT ? process.env.KAFKA_CLIENT_CERT.replace('\\n', '\n') : null,
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
