@@ -26,7 +26,7 @@ let emailTries = {};
  */
 function configureKafkaConsumer(handlers) {
   // create group consumer
-  const options = { groupId: config.KAFKA_GROUP_ID, connectionString: config.KAFKA_URL };
+  const options = { groupId: config.KAFKA_GROUP_ID, connectionString: config.KAFKA_URL, maxBytes:config.KAFKA_MAXBYTES };
   if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
     options.ssl = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY };
   }
