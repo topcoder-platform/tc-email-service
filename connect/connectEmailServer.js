@@ -9,6 +9,7 @@ const _ = require('lodash');
 const config = require('config');
 const emailServer = require('../index');
 const service = require('./service');
+const logger = require('../src/common/logger');
 
 // set configuration for the server, see ../config/default.js for available config parameters
 // setConfig should be called before initDatabase and start functions
@@ -26,11 +27,16 @@ const handler = (topic, message, callback) => {
     return callback(null, { success: false, error: `Template not found for topic ${topic}` });
   }
 
-  service.sendEmail(templateId, message).then(() => {
-    callback(null, { success: true });
-  }).catch((err) => {
-    callback(null, { success: false, error: err });
-  });
+  try {
+    service.sendEmail(templateId, message).then(() => {
+      callback(null, { success: true });
+    }).catch((err) => {
+      callback(null, { success: false, error: err });
+    });
+  } catch (error) {
+    logger.error('Unknown Error: ', error);
+  }
+
 };
 
 // init all events
