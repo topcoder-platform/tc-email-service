@@ -30,6 +30,18 @@ const sendEmail = (templateId, message) => { // send email
       cc,
       bcc,
     });
+  } else if (message.version && message.version=="legacy"){
+    return  sgMail.send({
+      to,
+      templateId,
+      substitutions,
+      substitutionWrappers: ['{', '}'],
+      from,
+      replyTo,
+      categories,
+      cc,
+      bcc,
+    });
   } else{
     return  sgMail.send({
       to,
@@ -43,6 +55,7 @@ const sendEmail = (templateId, message) => { // send email
       bcc,
     });
   }
+
 }
 module.exports = {
   sendEmail,
