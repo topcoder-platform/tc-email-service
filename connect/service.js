@@ -35,7 +35,7 @@ const sendEmail = (templateId, message) => { // send email
       to,
       templateId,
       substitutions,
-      substitutionWrappers: ['{', '}'],
+      substitutionWrappers: ['${', '}'],
       from,
       replyTo,
       categories,
