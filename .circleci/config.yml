@@ -82,7 +82,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: ['dev', 'legacy-email-support']
+              only: ['dev', 'feature/legacy-email-support']
       - "build-prod":
           context : org-global
           filters:
