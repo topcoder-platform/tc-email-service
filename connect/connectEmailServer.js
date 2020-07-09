@@ -22,20 +22,18 @@ emailServer.setConfig({ LOG_LEVEL: 'debug' });
 // the message is JSON event message,
 // the callback is function(error, templateId), where templateId is the used SendGrid template id
 const handler = (topic, message, callback) => {
-  const templateId = config.TEMPLATE_MAP[topic];
-  if (templateId === undefined) {
+  let templateId = config.TEMPLATE_MAP[topic];
+  templateId = _.get(message, config.PAYLOAD_SENDGRID_TEMPLATE_KEY, templateId);
+  if (!templateId) {
     return callback(null, { success: false, error: `Template not found for topic ${topic}` });
   }
 
-  try {
     service.sendEmail(templateId, message).then(() => {
       callback(null, { success: true });
     }).catch((err) => {
+      logger.error("Error occurred in sendgrid api calling:", err);
       callback(null, { success: false, error: err });
     });
-  } catch (error) {
-    logger.error('Unknown Error: ', error);
-  }
 
 };
 
