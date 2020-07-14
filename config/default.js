@@ -46,4 +46,6 @@ module.exports = {
 
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/email',
 
+  PAYLOAD_SENDGRID_TEMPLATE_KEY: process.env.PAYLOAD_SENDGRID_TEMPLATE_KEY || 'sendgrid_template_id',
+
 };
