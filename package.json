@@ -36,7 +36,7 @@
     "millisecond": "^0.1.2",
     "no-kafka": "^3.2.10",
     "node-schedule": "^1.3.0",
-    "pg": "^7.3.0",
+    "pg": "^7.18.2",
     "sequelize": "^5.15.1",
     "superagent": "^3.8.0",
     "tc-core-library-js": "appirio-tech/tc-core-library-js.git#v2.4",
