@@ -7,7 +7,9 @@
     "start": "node connect/connectEmailServer",
     "test": "NODE_ENV=test mocha",
     "lint": "eslint *.js src config connect || true",
-    "generate-tokens": "node generate-tokens.js"
+    "generate-tokens": "node generate-tokens.js",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "author": "TCSCODER",
   "license": "none",
@@ -40,9 +42,11 @@
     "sequelize": "^5.15.1",
     "superagent": "^3.8.0",
     "tc-core-library-js": "appirio-tech/tc-core-library-js.git#v2.4",
-    "winston": "^2.4.0"
+    "winston": "^2.4.0",
+    "@snyk/protect": "latest"
   },
   "engines": {
     "node": "8.7.0"
-  }
+  },
+  "snyk": true
 }
