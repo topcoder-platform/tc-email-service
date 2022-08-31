@@ -18,6 +18,7 @@ const sendEmail = (templateId, message) => { // send email
   const to = message.recipients;
   const cc =  message.cc ? message.cc : [];
   const bcc = message.bcc ? message.bcc : [];
+  const attachments = message.attachments ? message.attachments : [];
   
   if (message.version && message.version=="v3"){
     return  sgMail.send({
@@ -29,6 +30,7 @@ const sendEmail = (templateId, message) => { // send email
       categories,
       cc,
       bcc,
+      attachments
     });
   } else{
     return  sgMail.send({
