@@ -1,10 +1,6 @@
 /**
  * This is TopCoder connect email server.
  */
-'use strict';
-
-global.Promise = require('bluebird');
-
 const _ = require('lodash');
 const config = require('config');
 const emailServer = require('../index');
@@ -28,12 +24,12 @@ const handler = (topic, message, callback) => {
     return callback(null, { success: false, error: `Template not found for topic ${topic}` });
   }
 
-    service.sendEmail(templateId, message).then(() => {
-      callback(null, { success: true });
-    }).catch((err) => {
-      logger.error("Error occurred in sendgrid api calling:", err);
-      callback(null, { success: false, error: err });
-    });
+  service.sendEmail(templateId, message).then(() => {
+    callback(null, { success: true });
+  }).catch((err) => {
+    logger.error("Error occurred in sendgrid api calling:", err);
+    callback(null, { success: false, error: err });
+  });
 
 };
 
@@ -43,10 +39,13 @@ _.keys(config.TEMPLATE_MAP).forEach((eventType) => {
 });
 
 // init database, it will clear and re-create all tables
-emailServer
-  .initDatabase()
-  .then(() => emailServer.start())
-  .catch((e) => console.log(e)); // eslint-disable-line no-console
+// emailServer
+//   .initDatabase()
+//   .then(() => emailServer.start())
+//   .catch((e) => {
+//     console.log('Error occurred in starting email server:', e);
+//     console.log(e)
+//   }); // eslint-disable-line no-console
 
 // if no need to init database, then directly start the server:
-// emailServer.start();
+emailServer.start()

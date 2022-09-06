@@ -1,9 +1,6 @@
 /**
  * Email test.
  */
-'use strict';
-
-global.Promise = require('bluebird');
 
 const _ = require('lodash');
 const sgMail = require('@sendgrid/mail');
@@ -53,7 +50,7 @@ const successTestMessage = {
     value: 'Value',
     subject: 'Subject'
   },
-  recipients: [ 'invalid@invalid.tt' ]
+  recipients: ['invalid@invalid.tt']
 }
 
 describe('Email Test', () => {
