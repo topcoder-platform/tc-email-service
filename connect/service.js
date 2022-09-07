@@ -11,16 +11,18 @@ sgMail.setApiKey(config.SENDGRID_API_KEY);
 
 const sendEmail = (templateId, message) => { // send email
 
+  let msg = {}
   const from = message.from ? message.from : config.EMAIL_FROM;
   const replyTo = message.replyTo ? message.replyTo : config.EMAIL_FROM;
-  const substitutions = message.data ;
-  const categories = message.categories ? message.categories: [];
+  const substitutions = message.data;
+  const categories = message.categories ? message.categories : [];
   const to = message.recipients;
-  const cc =  message.cc ? message.cc : [];
+  const cc = message.cc ? message.cc : [];
   const bcc = message.bcc ? message.bcc : [];
-  
-  if (message.version && message.version=="v3"){
-    return  sgMail.send({
+  const sendTime = message.sendTime ? message.sendTime : null;
+
+  if (message.version && message.version == "v3") {
+    msg = {
       to,
       templateId,
       dynamicTemplateData: substitutions,
@@ -29,9 +31,9 @@ const sendEmail = (templateId, message) => { // send email
       categories,
       cc,
       bcc,
-    });
-  } else{
-    return  sgMail.send({
+    };
+  } else {
+    msg = {
       to,
       templateId,
       substitutions,
@@ -41,8 +43,9 @@ const sendEmail = (templateId, message) => { // send email
       categories,
       cc,
       bcc,
-    });
+    };
   }
+  return sgMail.send(msg)
 }
 module.exports = {
   sendEmail,
