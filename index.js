@@ -144,9 +144,9 @@ function start() {
       throw new errors.ValidationError('Missing handler(s).');
     }
 
-    schedule.scheduleJob(config.EMAIL_RETRY_SCHEDULE, function () {
-      app.retryEmail(handlers).catch((err) => logger.error(err));
-    });
+    // schedule.scheduleJob(config.EMAIL_RETRY_SCHEDULE, function () {
+    //   app.retryEmail(handlers).catch((err) => logger.error(err));
+    // });
     app.listen(app.get('port'), () => {
       logger.info(`Express server listening on port ${app.get('port')}`);
     });

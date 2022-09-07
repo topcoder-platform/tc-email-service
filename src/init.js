@@ -26,7 +26,6 @@ async function configureKafkaConsumer(handlers) {
   const kafka = new Kafka(options)
   const consumer = kafka.consumer({ groupId: config.KAFKA_GROUP_ID });
   // data handler
-  //TODO:what is this data handler?
   const dataHandler = (messageSet, topic, partition) => Promise.all(messageSet, (m) => {
     console.log("messageSet", messageSet);
     const message = m.message.value.toString('utf8');
@@ -92,6 +91,7 @@ async function configureKafkaConsumer(handlers) {
  * @param {Object} dataHandler the kafka data handler function
  */
 async function startKafkaConsumer(consumer, handlers, dataHandler) {
+  console.log(consumer, handlers, dataHandler)
   await consumer.connect()
   await Promise.all(_.keys(handlers), (topicName) => { // add back the ignored topic prefix to use full topic name
     emailTries[topicName] = 0;
