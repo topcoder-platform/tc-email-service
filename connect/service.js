@@ -19,8 +19,8 @@ const sendEmail = (templateId, message) => { // send email
   const to = message.recipients;
   const cc = message.cc ? message.cc : [];
   const bcc = message.bcc ? message.bcc : [];
-  const sendAt = message.sendAt ? message.sendAt : null;
-  const personalizations = message.personalizations ? message.personalizations : null
+  const sendAt = message.sendAt ? message.sendAt : undefined;
+  const personalizations = message.personalizations ? message.personalizations : undefined
   const attachments = message.attachments ? message.attachments : [];
 
   if (message.version && message.version == "v3") {
