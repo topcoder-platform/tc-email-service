@@ -10,6 +10,7 @@ sgMail.setApiKey(config.SENDGRID_API_KEY);
 
 const sendEmail = async (templateId, message) => { // send email
 
+  let msg = {}
   const from = message.from ? message.from : config.EMAIL_FROM;
   const replyTo = message.replyTo ? message.replyTo : config.EMAIL_FROM;
   const substitutions = message.data;
@@ -17,21 +18,26 @@ const sendEmail = async (templateId, message) => { // send email
   const to = message.recipients;
   const cc = message.cc ? message.cc : [];
   const bcc = message.bcc ? message.bcc : [];
+  const sendAt = message.sendAt ? message.sendAt : undefined;
+  const personalizations = message.personalizations ? message.personalizations : undefined
+  const attachments = message.attachments ? message.attachments : [];
 
-  let msg = {}
   if (message.version && message.version == "v3") {
-    msg = ({
+    msg = {
       to,
       templateId,
       dynamicTemplateData: substitutions,
+      personalizations,
       from,
       replyTo,
       categories,
       cc,
       bcc,
-    });
+      attachments,
+      sendAt
+    };
   } else {
-    msg = ({
+    msg = {
       to,
       templateId,
       substitutions,
@@ -41,9 +47,9 @@ const sendEmail = async (templateId, message) => { // send email
       categories,
       cc,
       bcc,
-    });
+    };
   }
-  return await sgMail.send(msg);
+  return sgMail.send(msg)
 }
 module.exports = {
   sendEmail,
