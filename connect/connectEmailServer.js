@@ -9,7 +9,7 @@ const logger = require('../src/common/logger');
 
 // set configuration for the server, see ../config/default.js for available config parameters
 // setConfig should be called before initDatabase and start functions
-emailServer.setConfig({ LOG_LEVEL: 'debug' });
+// emailServer.setConfig({ LOG_LEVEL: config.LOG_LEVEL });
 
 // add topic handlers,
 // handler is used build a notification list for a message of a topic,
@@ -39,13 +39,16 @@ _.keys(config.TEMPLATE_MAP).forEach((eventType) => {
 });
 
 // init database, it will clear and re-create all tables
-// emailServer
-//   .initDatabase()
-//   .then(() => emailServer.start())
-//   .catch((e) => {
-//     console.log('Error occurred in starting email server:', e);
-//     console.log(e)
-//   }); // eslint-disable-line no-console
+emailServer
+  .initDatabase()
+  .then(() => {
+    logger.info('Database initialized successfully.')
+    emailServer.start()
+  })
+  .catch((e) => {
+    console.log('Error occurred in starting email server:', e);
+    console.log(e)
+  }); // eslint-disable-line no-console
 
 // if no need to init database, then directly start the server:
-emailServer.start()
+// emailServer.start()

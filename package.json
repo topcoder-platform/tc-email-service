@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node connect/connectEmailServer",
     "test": "NODE_ENV=test mocha",
-    "lint": "eslint *.js src config connect || true",
-    "generate-tokens": "node generate-tokens.js"
+    "lint": "eslint *.js src config connect || true"
   },
   "author": "TCSCODER",
   "license": "none",

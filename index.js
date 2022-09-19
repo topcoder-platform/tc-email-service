@@ -108,7 +108,6 @@ _.each(require('./src/routes'), (verbs, url) => {
 
 app.use(config.API_CONTEXT_PATH, apiRouter);
 
-console.log('app.start [3]')
 app.use((req, res) => {
   res.status(404).json({ error: 'route not found' });
 });
@@ -153,11 +152,23 @@ function start() {
   })
 }
 
+/**
+ * Initialize database. All tables are cleared and re-created.
+ * @returns {Promise} promise to init db
+ */
+async function initDatabase() {
+  // load models only after config is set
+  logger.info('Initializing database...');
+  const models = require('./src/models');
+  await models.init(true);
+}
+
 // Exports
 module.exports = {
   setConfig,
   addTopicHandler,
   removeTopicHandler,
   getAllHandlers,
-  start
+  start,
+  initDatabase,
 };
