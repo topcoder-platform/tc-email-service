@@ -49,7 +49,7 @@ const sendEmail = async (templateId, message) => { // send email
       bcc,
     };
   }
-  return sgMail.send(msg)
+  return await sgMail.send(msg)
 }
 module.exports = {
   sendEmail,

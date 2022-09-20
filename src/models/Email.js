@@ -8,20 +8,20 @@
  * @author      TCSCODER
  * @version     1.0
  */
-async function Email(sequelize, DataTypes) {
+async function defineEmailModel(sequelize, DataTypes) {
   const Email = sequelize.define('Email', {
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
     topicName: { type: DataTypes.STRING, allowNull: true, field: 'topic_name' },
     data: { type: DataTypes.TEXT, allowNull: false },
     recipients: { type: DataTypes.STRING, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
-  }, {});
+  });
   await Email.sync();
   return Email;
 }
 
 module.exports = {
-  Email
+  defineEmailModel
 }
 
 // sequelize will generate and manage createdAt, updatedAt fields

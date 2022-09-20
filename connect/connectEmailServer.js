@@ -9,27 +9,27 @@ const logger = require('../src/common/logger');
 
 // set configuration for the server, see ../config/default.js for available config parameters
 // setConfig should be called before initDatabase and start functions
-// emailServer.setConfig({ LOG_LEVEL: config.LOG_LEVEL });
+emailServer.setConfig({ LOG_LEVEL: config.LOG_LEVEL });
 
 // add topic handlers,
 // handler is used build a notification list for a message of a topic,
-// it is defined as: function(topic, message, callback),
+// it is defined as: function(topic, message),
 // the topic is topic name,
 // the message is JSON event message,
-// the callback is function(error, templateId), where templateId is the used SendGrid template id
-const handler = (topic, message, callback) => {
+const handler = async (topic, message) => {
   let templateId = config.TEMPLATE_MAP[topic];
   templateId = _.get(message, config.PAYLOAD_SENDGRID_TEMPLATE_KEY, templateId);
   if (!templateId) {
-    return callback(null, { success: false, error: `Template not found for topic ${topic}` });
+    return { success: false, error: `Template not found for topic ${topic}` };
   }
 
-  service.sendEmail(templateId, message).then(() => {
-    callback(null, { success: true });
-  }).catch((err) => {
+  try {
+    await service.sendEmail(templateId, message)
+    return { success: true };
+  } catch (err) {
     logger.error("Error occurred in sendgrid api calling:", err);
-    callback(null, { success: false, error: err });
-  });
+    return { success: false, error: err };
+  }
 
 };
 

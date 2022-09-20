@@ -3,7 +3,6 @@ const config = require('config');
 const jwtAuth = require('tc-core-library-js').middleware.jwtAuthenticator;
 const express = require('express');
 const _ = require('lodash');
-const schedule = require('node-schedule');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const helper = require('./src/common/helper');
@@ -112,7 +111,7 @@ app.use((req, res) => {
   res.status(404).json({ error: 'route not found' });
 });
 
-app.use((err, req, res, next) => { // eslint-disable-line
+app.use((err, req, res) => { // eslint-disable-line
   logger.logFullError(err, req.signature);
   let status = err.httpStatus || 500;
   if (err.isJoi) {

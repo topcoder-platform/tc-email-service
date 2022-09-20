@@ -11,14 +11,14 @@
 
 const sequelizeInstance = require('./datasource');
 const DataTypes = require('sequelize/lib/data-types');
-const Email = require('./Email')
+const defineEmailModel = require('./Email')
 
 async function loadSequelizeModule() {
   return await sequelizeInstance.getSequelize();
 }
 async function loadEmailModule() {
   const sequelize = await loadSequelizeModule();
-  return await Email(sequelize, DataTypes);
+  return defineEmailModel(sequelize, DataTypes);
 }
 
 async function init() {
@@ -28,6 +28,6 @@ async function init() {
 
 
 module.exports = {
-  Email: loadEmailModule,
+  loadEmailModule,
   init,
 };
