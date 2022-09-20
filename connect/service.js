@@ -5,6 +5,7 @@
 
 const sgMail = require('@sendgrid/mail');
 const config = require('config');
+const { logger } = require('../src/common/logger');
 
 // set api key for SendGrid email client
 sgMail.setApiKey(config.SENDGRID_API_KEY);
@@ -50,6 +51,7 @@ const sendEmail = (templateId, message) => { // send email
       bcc,
     };
   }
+  logger.info(`Sending email with templateId: ${templateId} and message: ${JSON.stringify(msg)}`);
   return sgMail.send(msg)
 }
 module.exports = {
