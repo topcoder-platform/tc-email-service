@@ -46,8 +46,8 @@ emailServer
     emailServer.start()
   })
   .catch((e) => {
-    console.log('Error occurred in starting email server:', e);
-    console.log(e)
+    logger.error('Error occurred in starting email server:', e);
+    process.exit(1);
   }); // eslint-disable-line no-console
 
 // if no need to init database, then directly start the server:

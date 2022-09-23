@@ -9,6 +9,7 @@ const schedule = require('node-schedule');
 const helper = require('./src/common/helper');
 const logger = require('./src/common/logger');
 const errors = require('./src/common/errors');
+const models = require('./src/models');
 const { initServer, retryEmail } = require('./src/init');
 
 config.TEMPLATE_MAP = JSON.parse(config.TEMPLATE_MAP);
@@ -154,6 +155,9 @@ function start() {
     app.listen(app.get('port'), () => {
       logger.info(`Express server listening on port ${app.get('port')}`);
     });
+  }).catch((err) => {
+    logger.error(err);
+    process.exit(1);
   })
 }
 
@@ -164,7 +168,6 @@ function start() {
 async function initDatabase() {
   // load models only after config is set
   logger.info('Initializing database...');
-  const models = require('./src/models');
   await models.init(true);
 }
 
