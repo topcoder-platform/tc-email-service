@@ -1,6 +1,6 @@
 {
   "name": "tc-email",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Topcoder Email Services",
   "main": "index.js",
   "scripts": {

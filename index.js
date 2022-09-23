@@ -5,10 +5,11 @@ const express = require('express');
 const _ = require('lodash');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const schedule = require('node-schedule');
 const helper = require('./src/common/helper');
 const logger = require('./src/common/logger');
 const errors = require('./src/common/errors');
-const { initServer } = require('./src/init');
+const { initServer, retryEmail } = require('./src/init');
 
 config.TEMPLATE_MAP = JSON.parse(config.TEMPLATE_MAP);
 
@@ -142,9 +143,14 @@ function start() {
       throw new errors.ValidationError('Missing handler(s).');
     }
 
-    // schedule.scheduleJob(config.EMAIL_RETRY_SCHEDULE, function () {
-    //   app.retryEmail(handlers).catch((err) => logger.error(err));
-    // });
+    schedule.scheduleJob(config.EMAIL_RETRY_SCHEDULE, async function () {
+      try {
+        await retryEmail(handlers)
+      } catch (err) {
+        console.log(err);
+        logger.error(err);
+      }
+    });
     app.listen(app.get('port'), () => {
       logger.info(`Express server listening on port ${app.get('port')}`);
     });

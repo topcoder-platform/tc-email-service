@@ -1,12 +1,12 @@
 /**
- * Copyright (C) 2018 Topcoder Inc., All Rights Reserved.
+ * Copyright (C) 2022 Topcoder Inc., All Rights Reserved.
  */
 
 /**
  * Init  datasource
  *
  * @author      TCSCODER
- * @version     1.0
+ * @version     2.0
  */
 
 const config = require('config');

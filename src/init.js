@@ -78,7 +78,6 @@ async function dataHandler(consumer, handlers) {
           status: result.success ? 'Message accepted' : 'Message rejected',
           error: result.error ? result.error.toString() : 'No error message',
         });
-        console.log("******************* result *******************", result)
 
         if (result.success) {
           emailTries[topicName] = 0;
@@ -101,31 +100,31 @@ async function dataHandler(consumer, handlers) {
     },
   })
 
-  // const errorTypes = ['unhandledRejection', 'uncaughtException']
-  // const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
+  const errorTypes = ['unhandledRejection', 'uncaughtException']
+  const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-  // errorTypes.forEach(type => {
-  //   process.on(type, async e => {
-  //     try {
-  //       console.log(`process.on ${type}`)
-  //       console.error(e)
-  //       await consumer.disconnect()
-  //       process.exit(0)
-  //     } catch (_) {
-  //       process.exit(1)
-  //     }
-  //   })
-  // })
+  errorTypes.forEach(type => {
+    process.on(type, async e => {
+      try {
+        console.log(`process.on ${type}`)
+        console.error(e)
+        await consumer.disconnect()
+        process.exit(0)
+      } catch (_) {
+        process.exit(1)
+      }
+    })
+  })
 
-  // signalTraps.forEach(type => {
-  //   process.once(type, async () => {
-  //     try {
-  //       await consumer.disconnect()
-  //     } finally {
-  //       process.kill(process.pid, type)
-  //     }
-  //   })
-  // })
+  signalTraps.forEach(type => {
+    process.once(type, async () => {
+      try {
+        await consumer.disconnect()
+      } finally {
+        process.kill(process.pid, type)
+      }
+    })
+  })
 
 }
 
@@ -135,11 +134,12 @@ async function dataHandler(consumer, handlers) {
  * @param {Object} handlers the handlers
  */
 async function retryEmail(handlers) {
-  const models = await models.Email.findAll({ where: { status: 'FAILED', createdAt: { $gt: new Date(new Date() - config.EMAIL_RETRY_MAX_AGE) } } })
+  const loader = await models.loadEmailModule()
+  const emailModel = await loader.findAll({ where: { status: 'FAILED', createdAt: { $gt: new Date(new Date() - config.EMAIL_RETRY_MAX_AGE) } } })
 
-  if (models.length > 0) {
-    logger.info(`Found ${models.length} e-mails to be resent`);
-    models.map(async m => {
+  if (emailModel.length > 0) {
+    logger.info(`Found ${emailModel.length} e-mails to be resent`);
+    emailModel.map(async m => {
       // find handler
       const handler = handlers[m.topicName];
       if (!handler) {
