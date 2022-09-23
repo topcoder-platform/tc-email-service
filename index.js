@@ -148,7 +148,6 @@ function start() {
       try {
         await retryEmail(handlers)
       } catch (err) {
-        console.log(err);
         logger.error(err);
       }
     });

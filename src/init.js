@@ -57,12 +57,10 @@ async function dataHandler(consumer, handlers) {
         // return null to ignore this message
         return null;
       }
-      console.log([1])
       const emailModel = await models.loadEmailModule()
       const busPayload = JSON.parse(message);
       const messageJSON = busPayload.payload;
       try {
-
         const emailInfo = {
           status: 'PENDING',
           topicName,
@@ -70,13 +68,7 @@ async function dataHandler(consumer, handlers) {
           recipients: JSON.stringify(messageJSON.recipients),
         }
 
-        try {
-          console.log(emailModel)
-          await emailModel.create(emailInfo)
-
-        } catch (err) {
-          console.log(err)
-        }
+        await emailModel.create(emailInfo)
         const result = await handler(topicName, messageJSON);
 
         logger.info('info', 'Email sent', {
@@ -86,7 +78,7 @@ async function dataHandler(consumer, handlers) {
           status: result.success ? 'Message accepted' : 'Message rejected',
           error: result.error ? result.error.toString() : 'No error message',
         });
-
+        const emailTries = {}
         if (result.success) {
           emailTries[topicName] = 0;
           emailModel.status = 'SUCCESS';
@@ -98,7 +90,6 @@ async function dataHandler(consumer, handlers) {
           }
         }
       } catch (e) {
-        console.log(e)
         logger.error(e)
       }
 
