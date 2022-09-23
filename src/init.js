@@ -16,10 +16,18 @@ const models = require('./models');
 async function configureKafkaConsumer(handlers) {
 
   // create group consumer
-  const options = { brokers: config.KAFKA_URL.split(',') };
+  let brokers = ['']
+  if (config.KAFKA_URL.startsWith('ssl://')) {
+    brokers = config.KAFKA_URL.split('ssl://')[1].split(',')
+  } else {
+    brokers = config.KAFKA_URL.split(',')
+  }
+  const options = { brokers };
   if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
     options.ssl = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY };
   }
+
+
   const kafka = new Kafka(options)
   const consumer = kafka.consumer({ groupId: config.KAFKA_GROUP_ID });
   await consumer.connect()
