@@ -2,8 +2,8 @@
 # and runs it against the specified Topcoder backend (development or
 # production) when container is executed.
 
-FROM node:8.2.1
-LABEL app="tc email" version="1.1"
+FROM node:16.17
+LABEL app="tc email" version="2.0"
 
 WORKDIR /opt/app
 COPY . .

@@ -1,7 +1,6 @@
 /**
  * This file defines application errors.
  */
-'use strict';
 
 const util = require('util');
 
@@ -26,7 +25,7 @@ function _createError(name, statusCode) {
     this.cause = cause;
     this.httpStatus = statusCode;
   }
-
+  //TODO: upgrade to ES6
   util.inherits(ErrorCtor, Error);
   ErrorCtor.prototype.name = name;
   return ErrorCtor;

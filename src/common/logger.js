@@ -1,14 +1,12 @@
 /**
  * This module contains the winston logger configuration.
  */
-'use strict';
 
 const _ = require('lodash');
 const Joi = require('joi');
 const winston = require('winston');
 const util = require('util');
 const config = require('config');
-const getParams = require('get-parameter-names');
 
 const transports = [];
 
@@ -22,7 +20,7 @@ if (config.DISABLE_LOGGING == 'false') {
   }));
 }
 
-const logger = new (winston.Logger)({ transports });
+const logger = winston.createLogger({ transports });
 
 /**
  * Log error details with signature
@@ -88,8 +86,9 @@ logger.decorateWithLogging = function (service) {
     return;
   }
   _.each(service, (method, name) => {
-    const params = method.params || getParams(method);
-    service[name] = function*() {
+    //TODO: figure out a way to get params from method
+    const params = method.params || [];
+    service[name] = function* () {
       logger.debug('ENTER ' + name);
       logger.debug('input arguments');
       const args = Array.prototype.slice.call(arguments);
@@ -122,8 +121,9 @@ logger.decorateWithValidators = function (service) {
     if (!method.schema) {
       return;
     }
-    const params = getParams(method);
-    service[name] = function*() {
+    //TODO: figure out a way to get params from method
+    const params = method.params || [];
+    service[name] = function* () {
       const args = Array.prototype.slice.call(arguments);
       const value = _combineObject(params, args);
       const normalized = Joi.attempt(value, method.schema);

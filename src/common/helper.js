@@ -1,10 +1,8 @@
 /**
  * Contains generic helper methods
  */
-'use strict';
 
 const _ = require('lodash');
-const co = require('co');
 
 /**
  * Wrap generator function to standard express function
@@ -12,9 +10,14 @@ const co = require('co');
  * @returns {Function} the wrapped function
  */
 function wrapExpress(fn) {
-  return function (req, res, next) {
-    co(fn(req, res, next)).catch(next);
+  return async function (req, res, next) {
+    try {
+      await fn(req, res, next)
+    } catch (e) {
+      next
+    };
   };
+
 }
 
 /**

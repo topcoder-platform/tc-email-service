@@ -1,20 +1,41 @@
 /**
- * Copyright (C) 2018 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2022TopCoder Inc., All Rights Reserved.
  */
 
-/**
- * the sequelize schema index
- *
- * @author      TCSCODER
- * @version     1.0
- */
 
-const sequelize = require('./datasource').getSequelize();
+
+const sequelizeInstance = require('./datasource');
 const DataTypes = require('sequelize/lib/data-types');
+const logger = require('../common/logger');
 
-const Email = require('./Email')(sequelize, DataTypes);
+async function defineEmailModel(sequelize, DataTypes) {
+  const Email = sequelize.define('Email', {
+    id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
+    topicName: { type: DataTypes.STRING, allowNull: true, field: 'topic_name' },
+    data: { type: DataTypes.TEXT, allowNull: false },
+    recipients: { type: DataTypes.STRING, allowNull: false },
+    status: { type: DataTypes.STRING, allowNull: false },
+  });
+  await Email.sync();
+  return Email;
+}
+
+async function loadSequelizeModule() {
+  return await sequelizeInstance.getSequelize();
+}
+async function loadEmailModule() {
+  const sequelize = await loadSequelizeModule();
+  return defineEmailModel(sequelize, DataTypes);
+}
+
+async function init() {
+  logger.info("Initializing models");
+  const sequelize = await loadSequelizeModule();
+  await sequelize.sync();
+}
+
 
 module.exports = {
-  Email,
-  init: () => sequelize.sync(),
+  loadEmailModule,
+  init,
 };

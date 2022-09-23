@@ -1,7 +1,6 @@
 /**
  * This is TopCoder connect email service.
  */
-'use strict';
 
 const sgMail = require('@sendgrid/mail');
 const config = require('config');
@@ -10,7 +9,7 @@ const logger = require('../src/common/logger');
 // set api key for SendGrid email client
 sgMail.setApiKey(config.SENDGRID_API_KEY);
 
-const sendEmail = (templateId, message) => { // send email
+const sendEmail = async (templateId, message) => { // send email
 
   let msg = {}
   const from = message.from ? message.from : config.EMAIL_FROM;
@@ -52,7 +51,13 @@ const sendEmail = (templateId, message) => { // send email
     };
   }
   logger.info(`Sending email with templateId: ${templateId} and message: ${JSON.stringify(msg)}`);
-  return sgMail.send(msg)
+  try {
+    const result = await sgMail.send(msg)
+    return result
+  } catch (err) {
+    logger.error(`Error occurred in sendgrid api calling: ${err}`);
+    throw err
+  }
 }
 module.exports = {
   sendEmail,
