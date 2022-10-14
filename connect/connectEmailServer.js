@@ -6,6 +6,7 @@ const config = require('config');
 const emailServer = require('../index');
 const service = require('./service');
 const logger = require('../src/common/logger');
+const { functionWrapper } = require('../src/common/wrapper');
 
 // set configuration for the server, see ../config/default.js for available config parameters
 // setConfig should be called before initDatabase and start functions
@@ -17,20 +18,23 @@ emailServer.setConfig({ LOG_LEVEL: config.LOG_LEVEL });
 // the topic is topic name,
 // the message is JSON event message,
 const handler = async (topic, message) => {
-  let templateId = config.TEMPLATE_MAP[topic];
-  templateId = _.get(message, config.PAYLOAD_SENDGRID_TEMPLATE_KEY, templateId);
-  if (!templateId) {
-    return { success: false, error: `Template not found for topic ${topic}` };
-  }
+  (await functionWrapper(async () => {
 
-  try {
-    await service.sendEmail(templateId, message)
-    return { success: true };
-  } catch (err) {
-    logger.error("Error occurred in sendgrid api calling:", err);
-    return { success: false, error: err };
-  }
+    let templateId = config.TEMPLATE_MAP[topic];
+    templateId = _.get(message, config.PAYLOAD_SENDGRID_TEMPLATE_KEY, templateId);
+    if (!templateId) {
+      return { success: false, error: `Template not found for topic ${topic}` };
+    }
 
+    try {
+      await service.sendEmail(templateId, message)
+      return { success: true };
+    } catch (err) {
+      logger.error("Error occurred in sendgrid api calling:", err);
+      return { success: false, error: err };
+    }
+
+  }, 'emailHandler'))(topic, message);
 };
 
 // init all events

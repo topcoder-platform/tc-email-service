@@ -7,6 +7,7 @@ const _ = require('lodash');
 const { Kafka } = require('kafkajs')
 const logger = require('./common/logger');
 const models = require('./models');
+const { functionWrapper } = require('./common/wrapper');
 
 
 /**
@@ -39,65 +40,75 @@ async function configureKafkaConsumer(handlers) {
 
 
 async function dataHandler(consumer, handlers) {
-  await consumer.run({
-    eachMessage: async (data) => {
-      const topic = data.topic
-      const msg = data.message
-      const partition = data.partition
-      //If there is no message, return
-      if (!msg) return
-      const message = msg.value.toString('utf8')
-      logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Message: ${message}.`);
-      // ignore configured Kafka topic prefix
-      let topicName = topic;
-      // find handler
-      const handler = handlers[topicName];
-      if (!handler) {
-        logger.info(`No handler configured for topic: ${topicName}`);
-        // return null to ignore this message
-        return null;
-      }
-      const emailModel = await models.loadEmailModule()
-      const busPayload = JSON.parse(message);
-      const messageJSON = busPayload.payload;
-      try {
-        const emailInfo = {
-          status: 'PENDING',
-          topicName,
-          data: JSON.stringify(messageJSON),
-          recipients: JSON.stringify(messageJSON.recipients),
+
+  (await functionWrapper(async () => {
+
+
+    await consumer.run({
+      eachMessage: async (data) => {
+        const topic = data.topic
+        const msg = data.message
+        const partition = data.partition
+        //If there is no message, return
+        if (!msg) return
+        const message = msg.value.toString('utf8')
+        logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Message: ${message}.`);
+        // ignore configured Kafka topic prefix
+        let topicName = topic;
+        // find handler
+        const handler = handlers[topicName];
+        if (!handler) {
+          logger.info(`No handler configured for topic: ${topicName}`);
+          // return null to ignore this message
+          return null;
         }
-
-        await emailModel.create(emailInfo)
-        const result = await handler(topicName, messageJSON);
-
-        logger.info('info', 'Email sent', {
-          sender: 'Connect',
-          to_address: messageJSON.recipients.join(','),
-          from_address: config.EMAIL_FROM,
-          status: result.success ? 'Message accepted' : 'Message rejected',
-          error: result.error ? result.error.toString() : 'No error message',
-        });
-        const emailTries = {}
-        if (result.success) {
-          emailTries[topicName] = 0;
-          emailModel.status = 'SUCCESS';
-          await emailModel.save();
-        } else {
-          // emailTries[topicName] += 1; //temporary disabling this feature 
-          if (result.error) {
-            logger.error('error', 'Send email error details', result.error);
+        const emailModel = await models.loadEmailModule()
+        const busPayload = JSON.parse(message);
+        const messageJSON = busPayload.payload;
+        try {
+          const emailInfo = {
+            status: 'PENDING',
+            topicName,
+            data: JSON.stringify(messageJSON),
+            recipients: JSON.stringify(messageJSON.recipients),
           }
+
+          await emailModel.create(emailInfo)
+          const result = await handler(topicName, messageJSON);
+
+          logger.info('info', 'Email sent', {
+            sender: 'Connect',
+            to_address: messageJSON.recipients.join(','),
+            from_address: config.EMAIL_FROM,
+            status: result.success ? 'Message accepted' : 'Message rejected',
+            error: result.error ? result.error.toString() : 'No error message',
+          });
+          const emailTries = {}
+          if (result.success) {
+            emailTries[topicName] = 0;
+            emailModel.status = 'SUCCESS';
+            await emailModel.save();
+          } else {
+            // emailTries[topicName] += 1; //temporary disabling this feature 
+            if (result.error) {
+              logger.error('error', 'Send email error details', result.error);
+            }
+          }
+        } catch (e) {
+          logger.error(e)
         }
-      } catch (e) {
-        logger.error(e)
-      }
 
 
 
 
-    },
-  })
+      },
+    })
+
+
+
+  }, 'dataHandler'))(consumer, handlers);
+
+
 
   const errorTypes = ['unhandledRejection', 'uncaughtException']
   const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
@@ -124,6 +135,8 @@ async function dataHandler(consumer, handlers) {
       }
     })
   })
+
+
 
 }
 
