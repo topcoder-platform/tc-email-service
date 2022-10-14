@@ -37,6 +37,7 @@
     "sequelize": "^6.23.1",
     "superagent": "^8.0.0",
     "tc-core-library-js": "^2.4.1",
+    "tc-framework": "topcoder-platform/tc-framework.git#develop",
     "winston": "^3.8.1"
   }
 }
