@@ -148,6 +148,7 @@ function start() {
       try {
         await retryEmail(handlers)
       } catch (err) {
+        console.log('Error in retrying email', err)
         logger.error(err);
       }
     });
@@ -155,6 +156,7 @@ function start() {
       logger.info(`Express server listening on port ${app.get('port')}`);
     });
   }).catch((err) => {
+
     logger.error(err);
     process.exit(1);
   })
@@ -167,7 +169,9 @@ function start() {
 async function initDatabase() {
   // load models only after config is set
   logger.info('Initializing database...');
+  const span = await logger.startSpan('initDatabase');
   await models.init(true);
+  await logger.endSpan(span);
 }
 
 // Exports
@@ -179,3 +183,5 @@ module.exports = {
   start,
   initDatabase,
 };
+
+logger.buildService(module.exports)
