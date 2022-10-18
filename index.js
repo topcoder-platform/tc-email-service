@@ -169,7 +169,9 @@ function start() {
 async function initDatabase() {
   // load models only after config is set
   logger.info('Initializing database...');
+  const span = await logger.startSpan('initDatabase');
   await models.init(true);
+  await logger.endSpan(span);
 }
 
 // Exports
@@ -181,3 +183,5 @@ module.exports = {
   start,
   initDatabase,
 };
+
+logger.buildService(module.exports)
