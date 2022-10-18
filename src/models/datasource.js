@@ -21,10 +21,13 @@ let sequelizeInstance = null;
 async function getSequelize() {
   if (!sequelizeInstance) {
     sequelizeInstance = new Sequelize(config.DATABASE_URL, config.DATABASE_OPTIONS);
+    const span = await logger.startSpan('getSequelize');
     try {
       await sequelizeInstance.authenticate()
+      await logger.endSpan(span);
       logger.info('Database connection has been established successfully.');
     } catch (e) {
+      await logger.endSpanWithErr(span, e);
       logger.error('Unable to connect to the database:', err);
     }
   }
@@ -34,3 +37,5 @@ async function getSequelize() {
 module.exports = {
   getSequelize,
 };
+
+logger.buildService(module.exports)

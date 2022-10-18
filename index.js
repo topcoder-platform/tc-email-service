@@ -148,6 +148,7 @@ function start() {
       try {
         await retryEmail(handlers)
       } catch (err) {
+        console.log('Error in retrying email', err)
         logger.error(err);
       }
     });
@@ -155,6 +156,7 @@ function start() {
       logger.info(`Express server listening on port ${app.get('port')}`);
     });
   }).catch((err) => {
+
     logger.error(err);
     process.exit(1);
   })

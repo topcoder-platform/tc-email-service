@@ -7,7 +7,6 @@ const _ = require('lodash');
 const { Kafka } = require('kafkajs')
 const logger = require('./common/logger');
 const models = require('./models');
-const { functionWrapper } = require('./common/wrapper');
 
 
 /**
@@ -15,7 +14,6 @@ const { functionWrapper } = require('./common/wrapper');
  * @param {Object} handlers the handlers
  */
 async function configureKafkaConsumer(handlers) {
-
   // create group consumer
   let brokers = ['']
   if (config.KAFKA_URL.startsWith('ssl://')) {
@@ -28,24 +26,23 @@ async function configureKafkaConsumer(handlers) {
     options.ssl = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY };
   }
 
-
   const kafka = new Kafka(options)
   const consumer = kafka.consumer({ groupId: config.KAFKA_GROUP_ID });
+
   await consumer.connect()
   await consumer.subscribe({ topics: _.keys(handlers) });
   dataHandler(consumer, handlers).catch((err) => {
+    console.log('error', 'Kafka consumer error', err);
     logger.error(err);
   });
 }
 
 
 async function dataHandler(consumer, handlers) {
-
-  (await functionWrapper(async () => {
-
-
+  try {
     await consumer.run({
       eachMessage: async (data) => {
+        const span = await logger.startSpan('dataHandler');
         const topic = data.topic
         const msg = data.message
         const partition = data.partition
@@ -94,21 +91,17 @@ async function dataHandler(consumer, handlers) {
               logger.error('error', 'Send email error details', result.error);
             }
           }
+          await logger.endSpan(span);
         } catch (e) {
+          await logger.endSpanWithError(span, e);
           logger.error(e)
         }
 
-
-
-
       },
     })
-
-
-
-  }, 'dataHandler'))(consumer, handlers);
-
-
+  } catch (e) {
+    logger.error(e)
+  }
 
   const errorTypes = ['unhandledRejection', 'uncaughtException']
   const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
@@ -146,9 +139,9 @@ async function dataHandler(consumer, handlers) {
  * @param {Object} handlers the handlers
  */
 async function retryEmail(handlers) {
+  const span = await logger.startSpan('retryEmail');
   const loader = await models.loadEmailModule()
   const emailModel = await loader.findAll({ where: { status: 'FAILED', createdAt: { $gt: new Date(new Date() - config.EMAIL_RETRY_MAX_AGE) } } })
-
   if (emailModel.length > 0) {
     logger.info(`Found ${emailModel.length} e-mails to be resent`);
     emailModel.map(async m => {
@@ -156,6 +149,7 @@ async function retryEmail(handlers) {
       const handler = handlers[m.topicName];
       if (!handler) {
         logger.warn(`No handler configured for topic: ${m.topicName}`);
+        await logger.endSpan(span);
         return m;
       }
       const messageJSON = { data: JSON.parse(m.data), recipients: JSON.parse(m.recipients) };
@@ -163,23 +157,34 @@ async function retryEmail(handlers) {
       if (result.success) {
         logger.info(`Email model with ${m.id} was sent correctly`);
         m.status = 'SUCCESS';
+        await logger.endSpan(span);
         return m.save();
       }
       logger.info(`Email model with ${m.id} wasn't sent correctly`);
+      await logger.endSpan(span);
       return m;
     });
   } else {
+    await logger.endSpan(span);
     return models;
   }
 
 }
 
 async function initServer(handlers) {
-  await models.init()
-  await configureKafkaConsumer(handlers)
+  try {
+    const span = await logger.startSpan('initServer');
+    await models.init()
+    await configureKafkaConsumer(handlers)
+    await logger.endSpan(span);
+  } catch (e) {
+    await logger.endSpanWithError(span, e);
+  }
 }
 // Exports
 module.exports = {
   initServer,
   retryEmail,
 };
+
+logger.buildService(module.exports)
