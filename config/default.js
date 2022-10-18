@@ -51,6 +51,6 @@ module.exports = {
   PAYLOAD_SENDGRID_TEMPLATE_KEY: process.env.PAYLOAD_SENDGRID_TEMPLATE_KEY || 'sendgrid_template_id',
   //Tracing information
   APM_OTLP_TRACE_EXPORTER_URL: process.env.APM_OTLP_TRACE_EXPORTER_URL || '',
-  APM_SERVICE_NAME: process.env.APM_SERVICE_NAME || 'tc-email-service',
-  APM_TRACER_NAME: process.env.APM_TRACER_NAME || 'tc-email-service',
+  APM_SERVICE_NAME: process.env.APM_SERVICE_NAME || 'tc-email-service-svc',
+  APM_TRACER_NAME: process.env.APM_TRACER_NAME || 'tc-email-service-svc',
 };
