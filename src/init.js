@@ -70,7 +70,7 @@ async function dataHandler(consumer, handlers) {
             recipients: JSON.stringify(messageJSON.recipients),
           }
 
-          await emailModel.create(emailInfo)
+          const emailObj = await emailModel.create(emailInfo)
           const result = await handler(topicName, messageJSON);
 
           logger.info('info', 'Email sent', {
@@ -83,8 +83,8 @@ async function dataHandler(consumer, handlers) {
           const emailTries = {}
           if (result.success) {
             emailTries[topicName] = 0;
-            emailModel.status = 'SUCCESS';
-            await emailModel.save();
+            emailObj.status = 'SUCCESS';
+            await emailObj.save();
           } else {
             // emailTries[topicName] += 1; //temporary disabling this feature 
             if (result.error) {

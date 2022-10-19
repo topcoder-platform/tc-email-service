@@ -56,7 +56,7 @@ const sendEmail = async (templateId, message) => { // send email
     const sgSpan = await logger.startSpan('sendgrid');
     const result = await sgMail.send(msg)
     await logger.endSpan(sgSpan);
-    logger.info(`Email sent successfully with result: ${JSON.stringify(result)}`);
+    logger.info(`Email sent successfully with result: ${JSON.stringify(result)} \n ${JSON.stringify(msg)}`);
     return result
   } catch (err) {
     logger.error(`Error occurred in sendgrid api calling: ${err}`);
