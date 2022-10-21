@@ -4,9 +4,9 @@ info:
   description: "TOPCODER EMAIL SERIES - EMAIL SERVER"
   version: "1.0.0"
 host: "localhost:6100"
-basePath : "/v5/email"
+basePath: "/v5/email"
 schemes:
-- "https"
+  - "https"
 securityDefinitions:
   jwt:
     type: apiKey
@@ -17,8 +17,7 @@ securityDefinitions:
 paths:
   /health:
     get:
-      description:
-        health check endpoint
+      description: health check endpoint
       produces:
         - application/json
       responses:
