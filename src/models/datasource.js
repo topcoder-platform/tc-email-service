@@ -9,33 +9,33 @@
  * @version     2.0
  */
 
-const config = require('config');
-const Sequelize = require('sequelize');
-const logger = require('../common/logger');
+const config = require('config')
+const Sequelize = require('sequelize')
+const logger = require('../common/logger')
 
-let sequelizeInstance = null;
+let sequelizeInstance = null
 
 /**
  * get sequelize instance
  */
-async function getSequelize() {
+async function getSequelize () {
   if (!sequelizeInstance) {
-    sequelizeInstance = new Sequelize(config.DATABASE_URL, config.DATABASE_OPTIONS);
-    const span = await logger.startSpan('getSequelize');
+    sequelizeInstance = new Sequelize(config.DATABASE_URL, config.DATABASE_OPTIONS)
+    const span = await logger.startSpan('getSequelize')
     try {
       await sequelizeInstance.authenticate()
-      await logger.endSpan(span);
-      logger.info('Database connection has been established successfully.');
+      await logger.endSpan(span)
+      logger.info('Database connection has been established successfully.')
     } catch (e) {
-      await logger.endSpanWithErr(span, e);
-      logger.error('Unable to connect to the database:', err);
+      await logger.endSpanWithErr(span, e)
+      logger.error('Unable to connect to the database:', e)
     }
   }
-  return sequelizeInstance;
+  return sequelizeInstance
 }
 
 module.exports = {
-  getSequelize,
-};
+  getSequelize
+}
 
 logger.buildService(module.exports)
