@@ -1,21 +1,18 @@
 /**
  * Email test.
  */
+/* eslint-env mocha */
+const _ = require('lodash')
+const config = require('config')
+const Kafka = require('no-kafka')
 
-const _ = require('lodash');
-const sgMail = require('@sendgrid/mail');
-const config = require('config');
-const Kafka = require('no-kafka');
-
-const emailServer = require('../index');
-const service = require('../connect/service');
-
-let globalDone = null;
+const emailServer = require('../index')
+const service = require('../connect/service')
 
 const defaultHandler = async (topic, message, callback) => {
-  const templateId = config.TEMPLATE_MAP[topic];
+  const templateId = config.TEMPLATE_MAP[topic]
   if (templateId === undefined) {
-    return { success: false, error: `Template not found for topic ${topic}` };
+    return { success: false, error: `Template not found for topic ${topic}` }
   }
   try {
     // send email
@@ -28,17 +25,8 @@ const defaultHandler = async (topic, message, callback) => {
 
 // init all events
 _.keys(config.TEMPLATE_MAP).forEach((eventType) => {
-  emailServer.addTopicHandler(eventType, defaultHandler);
-});
-
-const finish = (err) => {
-  if (globalDone) {
-    setTimeout(() => {
-      globalDone(err);
-      globalDone = null;
-    }, 10);
-  }
-}
+  emailServer.addTopicHandler(eventType, defaultHandler)
+})
 
 const successTestMessage = {
   data: {
@@ -50,39 +38,36 @@ const successTestMessage = {
 }
 
 describe('Email Test', () => {
-  let producer;
+  let producer
 
   before(() => {
-    producer = new Kafka.Producer();
-    return producer.init().then(() => emailServer.start());
-  });
+    producer = new Kafka.Producer()
+    return producer.init().then(() => emailServer.start())
+  })
 
   after(function () {
-    return producer.end();
-  });
+    return producer.end()
+  })
 
   describe('Created', () => {
     it('success', (done) => {
-      globalDone = done;
       producer.send({
         topic: `${config.KAFKA_TOPIC_PREFIX}email.project.created`,
         message: {
           value: JSON.stringify(successTestMessage)
         }
-      });
-    });
-  });
+      })
+    })
+  })
 
   describe('Updated', () => {
     it('success', (done) => {
-      globalDone = done;
       producer.send({
         topic: `${config.KAFKA_TOPIC_PREFIX}email.project.updated`,
         message: {
           value: JSON.stringify(successTestMessage)
         }
-      });
-    });
-  });
-
-});
+      })
+    })
+  })
+})

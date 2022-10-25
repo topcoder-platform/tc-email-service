@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node connect/connectEmailServer",
     "test": "NODE_ENV=test mocha",
-    "lint": "eslint *.js src config connect || true"
+    "lint": "standard --fix"
   },
   "author": "TCSCODER",
   "license": "none",
@@ -15,7 +15,8 @@
     "eslint": "^8.23.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "mocha": "^10.0.0"
+    "mocha": "^10.0.0",
+    "standard": "^17.0.0"
   },
   "dependencies": {
     "@sendgrid/client": "^7.7.0",

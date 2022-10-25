@@ -2,7 +2,7 @@
  * This file defines application errors.
  */
 
-const util = require('util');
+const util = require('util')
 
 /**
  * Helper function to create generic error object with http status code
@@ -11,24 +11,24 @@ const util = require('util');
  * @returns {Function} the error constructor
  * @private
  */
-function _createError(name, statusCode) {
+function _createError (name, statusCode) {
   /**
    * The error constructor
    * @param {String} message the error message
    * @param {String} [cause] the error cause
    * @constructor
    */
-  function ErrorCtor(message, cause) {
-    Error.call(this);
-    Error.captureStackTrace(this);
-    this.message = message || name;
-    this.cause = cause;
-    this.httpStatus = statusCode;
+  function ErrorCtor (message, cause) {
+    Error.call(this)
+    Error.captureStackTrace(this)
+    this.message = message || name
+    this.cause = cause
+    this.httpStatus = statusCode
   }
-  //TODO: upgrade to ES6
-  util.inherits(ErrorCtor, Error);
-  ErrorCtor.prototype.name = name;
-  return ErrorCtor;
+  // TODO: upgrade to ES6
+  util.inherits(ErrorCtor, Error)
+  ErrorCtor.prototype.name = name
+  return ErrorCtor
 }
 
 module.exports = {
@@ -36,5 +36,5 @@ module.exports = {
   ValidationError: _createError('ValidationError', 400),
   UnauthorizedError: _createError('UnauthorizedError', 401),
   ForbiddenError: _createError('ForbiddenError', 403),
-  NotFoundError: _createError('NotFoundError', 404),
-};
+  NotFoundError: _createError('NotFoundError', 404)
+}

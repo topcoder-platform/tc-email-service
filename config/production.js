@@ -4,5 +4,5 @@
 module.exports = {
   LOG_LEVEL: process.env.LOG_LEVEL || 'error',
   PORT: process.env.PORT || 4000,
-  DISABLE_LOGGING: process.env.DISABLE_LOGGING || 'true',
-};
+  DISABLE_LOGGING: process.env.DISABLE_LOGGING || 'true'
+}

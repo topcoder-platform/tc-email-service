@@ -7,11 +7,11 @@
  * @param req the request
  * @param res the response
  */
-function health(req, res) {
-  res.json({ health: 'ok' });
+function health (req, res) {
+  res.json({ health: 'ok' })
 }
 
 // Exports
 module.exports = {
-  health,
-};
+  health
+}
