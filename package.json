@@ -1,48 +1,43 @@
 {
   "name": "tc-email",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Topcoder Email Services",
   "main": "index.js",
   "scripts": {
     "start": "node connect/connectEmailServer",
     "test": "NODE_ENV=test mocha",
-    "lint": "eslint *.js src config connect || true",
-    "generate-tokens": "node generate-tokens.js"
+    "lint": "eslint *.js src config connect || true"
   },
   "author": "TCSCODER",
   "license": "none",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^5.4.0",
-    "eslint-config-airbnb-base": "^1.0.1",
-    "eslint-plugin-import": "^1.5.0",
-    "mocha": "^5.0.0"
+    "chai": "^4.3.6",
+    "eslint": "^8.23.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "mocha": "^10.0.0"
   },
   "dependencies": {
-    "@sendgrid/client": "6.3.0",
-    "@sendgrid/mail": "6.3.1",
-    "@sendgrid/helpers": "6.3.0",
-    "bluebird": "^3.5.1",
-    "body-parser": "^1.15.2",
-    "co": "^4.6.0",
-    "config": "^1.29.2",
-    "console.history": "^1.5.0",
-    "cors": "^2.7.1",
-    "express": "^4.14.0",
-    "get-parameter-names": "^0.3.0",
-    "joi": "^13.6.0",
-    "jwks-rsa": "^1.3.0",
-    "lodash": "^4.17.13",
-    "millisecond": "^0.1.2",
-    "no-kafka": "^3.2.10",
-    "node-schedule": "^1.3.0",
-    "pg": "^7.3.0",
-    "sequelize": "^5.15.1",
-    "superagent": "^3.8.0",
-    "tc-core-library-js": "appirio-tech/tc-core-library-js.git#v2.4",
-    "winston": "^2.4.0"
-  },
-  "engines": {
-    "node": "8.7.0"
+    "@sendgrid/client": "^7.7.0",
+    "@sendgrid/helpers": "7.7.0",
+    "@sendgrid/mail": "^7.7.0",
+    "axios": "^0.27.2",
+    "body-parser": "^1.20.0",
+    "config": "^3.3.7",
+    "console.history": "^1.5.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "joi": "^17.6.1",
+    "jwks-rsa": "^2.1.4",
+    "kafkajs": "^2.2.0",
+    "lodash": "^4.17.21",
+    "node-schedule": "^2.1.0",
+    "pg": "^8.8.0",
+    "sequelize": "^6.23.1",
+    "superagent": "^8.0.0",
+    "tc-core-library-js": "^2.4.1",
+    "tc-framework": "topcoder-platform/tc-framework.git#develop",
+    "winston": "^3.8.1"
   }
 }
