@@ -39,9 +39,9 @@ jobs:
       - setup_remote_docker
       - run: *install_dependency
       - run: *install_deploysuite
-      - restore_cache: *restore_cache_settings_for_build
+      #- restore_cache: *restore_cache_settings_for_build
       - run: *run_build
-      - save_cache: *save_cache_settings
+      #- save_cache: *save_cache_settings
       - deploy:
           name: Running Masterscript - deploy tc-email-service
           command: |
@@ -58,9 +58,9 @@ jobs:
       - setup_remote_docker
       - run: *install_dependency
       - run: *install_deploysuite
-      - restore_cache: *restore_cache_settings_for_build
+      #- restore_cache: *restore_cache_settings_for_build
       - run: *run_build
-      - save_cache: *save_cache_settings
+      #- save_cache: *save_cache_settings
       - deploy:
           name: Running Masterscript - prod deploy tc-email-service
           command: |
