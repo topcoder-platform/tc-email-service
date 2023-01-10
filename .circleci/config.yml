@@ -51,6 +51,25 @@ jobs:
             source buildenvvar
             ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-email-service-appvar -i tc-email-service
 
+  "build-qa":
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: *install_dependency
+      - run: *install_deploysuite
+      #- restore_cache: *restore_cache_settings_for_build
+      - run: *run_build
+      #- save_cache: *save_cache_settings
+      - deploy:
+          name: Running Masterscript - deploy tc-email-service
+          command: |
+            ./awsconfiguration.sh QA
+            source awsenvconf
+            ./buildenv.sh -e QA -b qa-tc-email-service-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e QA -t latest -s qa-global-appvar,qa-tc-email-service-appvar -i tc-email-service
+
   "build-prod":
     <<: *defaults
     steps:
@@ -80,6 +99,11 @@ workflows:
           filters:
             branches:
               only: ["dev", "feature/decouple-sendgridtemplateid"]
+      - "build-qa":
+          context: org-global
+          filters:
+            branches:
+              only: ["qa", "feature/decouple-sendgridtemplateid"]              
       - "build-prod":
           context: org-global
           filters:
