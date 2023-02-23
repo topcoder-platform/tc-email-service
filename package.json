@@ -35,7 +35,7 @@
     "lodash": "^4.17.21",
     "node-schedule": "^2.1.0",
     "pg": "^8.8.0",
-    "sequelize": "^6.23.1",
+    "sequelize": "^6.28.2",
     "superagent": "^8.0.0",
     "tc-core-library-js": "^2.4.1",
     "tc-framework": "git@github.com:topcoder-platform/tc-framework.git#29f6a58b65b3610147161a4ba29752e6b7ca916f",
