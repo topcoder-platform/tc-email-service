@@ -27,7 +27,7 @@ async function getSequelize () {
       await logger.endSpan(span)
       logger.info('Database connection has been established successfully.')
     } catch (e) {
-      await logger.endSpanWithErr(span, e)
+      await logger.endSpanWithError(span, e)
       logger.error('Unable to connect to the database:', e)
     }
   }
