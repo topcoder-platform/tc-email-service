@@ -144,6 +144,7 @@ function start () {
 
     schedule.scheduleJob(config.EMAIL_RETRY_SCHEDULE, async function () {
       try {
+        logger.info("Retrying failed emails")
         await retryEmail(handlers)
       } catch (err) {
         console.log('Error in retrying email', err)
