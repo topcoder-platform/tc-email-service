@@ -28,7 +28,9 @@ async function configureKafkaConsumer (handlers) {
   const kafka = new Kafka(options)
   const consumer = kafka.consumer({ groupId: config.KAFKA_GROUP_ID })
 
+  logger.info("Connecting to Kafka...")
   await consumer.connect()
+  logger.info(`Subscribing to topics: ${_.keys(handlers)}`)
   await consumer.subscribe({ topics: _.keys(handlers) })
   dataHandler(consumer, handlers).catch((err) => {
     console.log('error', 'Kafka consumer error', err)
