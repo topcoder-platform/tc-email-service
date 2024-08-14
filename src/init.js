@@ -16,7 +16,7 @@ async function configureKafkaConsumer (handlers) {
   // create group consumer
   let brokers = ['']
   if (config.KAFKA_URL.startsWith('ssl://')) {
-    brokers = config.KAFKA_URL.split('ssl://')[1].split(',')
+    brokers = _.replace(config.KAFKA_URL, 'ssl://', '').split(',')
   } else {
     brokers = config.KAFKA_URL.split(',')
   }
