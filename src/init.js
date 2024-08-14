@@ -29,6 +29,8 @@ async function configureKafkaConsumer (handlers) {
   const consumer = kafka.consumer({ groupId: config.KAFKA_GROUP_ID })
 
   logger.info("Connecting to Kafka...")
+  logger.info(`Kafka options: ${JSON.stringify(options)}`)
+  logger.info(`Kafka group ID: ${config.KAFKA_GROUP_ID}`)
   await consumer.connect()
   logger.info(`Subscribing to topics: ${_.keys(handlers)}`)
   await consumer.subscribe({ topics: _.keys(handlers) })
