@@ -79,7 +79,7 @@ workflows:
           context: org-global
           filters:
             branches:
-              only: ["dev", "feature/decouple-sendgridtemplateid"]
+              only: ["dev", "feature/decouple-sendgridtemplateid", "db_schema"]
       - "build-prod":
           context: org-global
           filters:
