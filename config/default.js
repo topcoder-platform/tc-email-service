@@ -11,13 +11,16 @@ module.exports = {
     dialect: 'postgres',
     logging: false,
     dialectOptions: {
-      ssl: process.env.DATABASE_SSL != null
+      ssl: process.env.DATABASE_SSL != null,
+      prependSearchPath: true
     },
     pool: {
       max: 5,
       min: 0,
       idle: 10000
-    }
+    },
+    schema: process.env.DATABASE_SCHEMA,
+    searchPath: process.env.DATABASE_SCHEMA,
   },
   DISABLE_LOGGING: process.env.DISABLE_LOGGING || 'false',
 
