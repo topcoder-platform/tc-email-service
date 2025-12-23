@@ -35,9 +35,6 @@ async function health (req, res) {
       groupId: config.KAFKA_GROUP_ID,
       bootstrapBrokers: brokers
     }
-    if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
-      options.tls = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY }
-    }
 
     const { Consumer } = await loadKafkaModule()
     const consumer = new Consumer(options)
@@ -46,8 +43,12 @@ async function health (req, res) {
 
     await consumer.metadata({ topics: [] })
     await consumer.close()
-    res.json({ health: 'ok' })
+    const healthData = { health: 'ok' }
+    console.log('health', healthData)
+    res.json(healthData)
   } catch (err) {
+    const errorMessage = err && err.message ? err.message : String(err)
+    console.log('health', { health: 'error', error: errorMessage })
     res.sendStatus(500)
   }
 }

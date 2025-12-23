@@ -33,9 +33,6 @@ async function configureKafkaConsumer (handlers) {
     groupId: config.KAFKA_GROUP_ID,
     bootstrapBrokers: brokers
   }
-  if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
-    options.tls = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY }
-  }
 
   const { Consumer } = await loadKafkaModule()
   const consumer = new Consumer(options)
