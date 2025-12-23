@@ -3,8 +3,16 @@
  */
 const config = require('config')
 const _ = require('lodash')
-const { Kafka } = require('kafkajs')
 const logger = require('../common/logger')
+
+let kafkaModulePromise
+
+function loadKafkaModule () {
+  if (!kafkaModulePromise) {
+    kafkaModulePromise = import('@platformatic/kafka')
+  }
+  return kafkaModulePromise
+}
 
 /**
  * Health Check.  Ensures we have a proper, valid connection to Kafka
@@ -22,24 +30,26 @@ async function health (req, res) {
     } else {
       brokers = config.KAFKA_URL.split(',')
     }
-    const options = { brokers }
+    const options = {
+      clientId: config.KAFKA_CLIENT_ID || 'tc-email-service',
+      groupId: config.KAFKA_GROUP_ID,
+      bootstrapBrokers: brokers
+    }
     if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
-      options.ssl = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY }
+      options.tls = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY }
     }
 
-    const kafka = new Kafka(options)
-    const consumer = kafka.consumer({ groupId: config.KAFKA_GROUP_ID })
+    const { Consumer } = await loadKafkaModule()
+    const consumer = new Consumer(options)
 
-    logger.info("Health check testing connection to Kafka...")
-    
-    await consumer.connect()
-    await consumer.disconnect()
+    logger.info('Health check testing connection to Kafka...')
+
+    await consumer.metadata({ topics: [] })
+    await consumer.close()
     res.json({ health: 'ok' })
+  } catch (err) {
+    res.sendStatus(500)
   }
-  catch(err){
-    res.sendStatus(500);
-  }
-  
 }
 
 // Exports
