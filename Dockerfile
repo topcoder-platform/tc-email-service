@@ -3,7 +3,7 @@
 # production) when container is executed.
 
 
-FROM node:16.17
+FROM node:20.19.4
 LABEL app="tc email" version="1.1"
 
 WORKDIR /opt/app

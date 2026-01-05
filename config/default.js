@@ -20,12 +20,13 @@ module.exports = {
       idle: 10000
     },
     schema: process.env.DATABASE_SCHEMA,
-    searchPath: process.env.DATABASE_SCHEMA,
+    searchPath: process.env.DATABASE_SCHEMA
   },
   DISABLE_LOGGING: process.env.DISABLE_LOGGING || 'false',
 
   VALID_ISSUERS: process.env.VALID_ISSUERS,
   KAFKA_URL: process.env.KAFKA_URL,
+  KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID || 'tc-email-service',
 
   // max bytes 2MB
   KAFKA_MAXBYTES: process.env.MAXBYTES || 2097152,

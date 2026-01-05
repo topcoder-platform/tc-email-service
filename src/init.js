@@ -4,9 +4,17 @@
 
 const config = require('config')
 const _ = require('lodash')
-const { Kafka } = require('kafkajs')
 const logger = require('./common/logger')
 const models = require('./models')
+
+let kafkaModulePromise
+
+function loadKafkaModule () {
+  if (!kafkaModulePromise) {
+    kafkaModulePromise = import('@platformatic/kafka')
+  }
+  return kafkaModulePromise
+}
 
 /**
  * Configure Kafka consumer.
@@ -20,115 +28,132 @@ async function configureKafkaConsumer (handlers) {
   } else {
     brokers = config.KAFKA_URL.split(',')
   }
-  const options = { brokers }
-  if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
-    options.ssl = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY }
+  const options = {
+    clientId: config.KAFKA_CLIENT_ID || 'tc-email-service',
+    groupId: config.KAFKA_GROUP_ID,
+    bootstrapBrokers: brokers
   }
 
-  const kafka = new Kafka(options)
-  const consumer = kafka.consumer({ groupId: config.KAFKA_GROUP_ID })
+  const { Consumer } = await loadKafkaModule()
+  const consumer = new Consumer(options)
 
-  logger.info("Connecting to Kafka...")
+  logger.info('Connecting to Kafka...')
   logger.info(`Kafka options: ${JSON.stringify(options)}`)
   logger.info(`Kafka group ID: ${config.KAFKA_GROUP_ID}`)
-  await consumer.connect()
-  logger.info(`Subscribing to topics: ${_.keys(handlers)}`)
-  await consumer.subscribe({ topics: _.keys(handlers) })
-  dataHandler(consumer, handlers).catch((err) => {
+  const topics = _.keys(handlers)
+  logger.info(`Subscribing to topics: ${topics}`)
+  dataHandler(consumer, topics, handlers).catch((err) => {
     console.log('error', 'Kafka consumer error', err)
     logger.error(err)
   })
 }
 
-async function dataHandler (consumer, handlers) {
+async function dataHandler (consumer, topics, handlers) {
   try {
-    await consumer.run({
-      eachMessage: async (data) => {
-        const span = await logger.startSpan('dataHandler')
-        const topic = data.topic
-        const msg = data.message
-        const partition = data.partition
-        // If there is no message, return
-        if (!msg) return
-        const message = msg.value.toString('utf8')
-        logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Message: ${message}.`)
-        // ignore configured Kafka topic prefix
-        const topicName = topic
-        // find handler
-        const handler = handlers[topicName]
-        if (!handler) {
-          logger.info(`No handler configured for topic: ${topicName}`)
-          // return null to ignore this message
-          return null
-        }
-        const emailModel = await models.loadEmailModule()
-        const busPayload = JSON.parse(message)
-        const messageJSON = busPayload.payload
-        try {
-          const emailInfo = {
-            status: 'PENDING',
-            topicName,
-            data: JSON.stringify(messageJSON),
-            recipients: JSON.stringify(messageJSON.recipients)
-          }
-
-          const emailObj = await emailModel.create(emailInfo)
-          const result = await handler(topicName, messageJSON)
-
-          logger.info('info', 'Email sent', {
-            sender: 'Connect',
-            to_address: messageJSON.recipients.join(','),
-            from_address: config.EMAIL_FROM,
-            status: result.success ? 'Message accepted' : 'Message rejected',
-            error: result.error ? result.error.toString() : 'No error message'
-          })
-          const emailTries = {}
-          if (result.success) {
-            emailTries[topicName] = 0
-            emailObj.status = 'SUCCESS'
-            await emailObj.save()
-          } else {
-            // emailTries[topicName] += 1; //temporary disabling this feature
-            if (result.error) {
-              logger.error('error', 'Send email error details', result.error)
-            }
-          }
-          await logger.endSpan(span)
-        } catch (e) {
-          await logger.endSpanWithError(span, e)
-          logger.error(e)
-        }
-      }
+    const stream = await consumer.consume({ topics, autocommit: true })
+    stream.on('error', (err) => {
+      console.log('error', 'Kafka consumer error', err)
+      logger.error(err)
     })
+
+    const errorTypes = ['unhandledRejection', 'uncaughtException']
+    const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
+
+    const closeConsumer = async () => {
+      try {
+        await stream.close()
+      } catch (err) {
+        logger.error(err)
+      }
+      try {
+        await consumer.close()
+      } catch (err) {
+        logger.error(err)
+      }
+    }
+
+    errorTypes.forEach(type => {
+      process.on(type, async e => {
+        try {
+          console.log(`process.on ${type}`)
+          console.error(e)
+          await closeConsumer()
+          process.exit(0)
+        } catch (_) {
+          process.exit(1)
+        }
+      })
+    })
+
+    signalTraps.forEach(type => {
+      process.once(type, async () => {
+        try {
+          await closeConsumer()
+        } finally {
+          process.kill(process.pid, type)
+        }
+      })
+    })
+
+    for await (const message of stream) {
+      const span = await logger.startSpan('dataHandler')
+      const topic = message.topic
+      const msg = message.value
+      const partition = message.partition
+      // If there is no message, return
+      if (!msg) continue
+      const messageValue = msg.toString('utf8')
+      logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Message: ${messageValue}.`)
+      // ignore configured Kafka topic prefix
+      const topicName = topic
+      // find handler
+      const handler = handlers[topicName]
+      if (!handler) {
+        logger.info(`No handler configured for topic: ${topicName}`)
+        // return null to ignore this message
+        continue
+      }
+      const emailModel = await models.loadEmailModule()
+      const busPayload = JSON.parse(messageValue)
+      const messageJSON = busPayload.payload
+      try {
+        const emailInfo = {
+          status: 'PENDING',
+          topicName,
+          data: JSON.stringify(messageJSON),
+          recipients: JSON.stringify(messageJSON.recipients)
+        }
+
+        const emailObj = await emailModel.create(emailInfo)
+        const result = await handler(topicName, messageJSON)
+
+        logger.info('info', 'Email sent', {
+          sender: 'Connect',
+          to_address: messageJSON.recipients.join(','),
+          from_address: config.EMAIL_FROM,
+          status: result.success ? 'Message accepted' : 'Message rejected',
+          error: result.error ? result.error.toString() : 'No error message'
+        })
+        const emailTries = {}
+        if (result.success) {
+          emailTries[topicName] = 0
+          emailObj.status = 'SUCCESS'
+          await emailObj.save()
+        } else {
+          // emailTries[topicName] += 1; //temporary disabling this feature
+          if (result.error) {
+            logger.error('error', 'Send email error details', result.error)
+          }
+        }
+        await logger.endSpan(span)
+      } catch (e) {
+        await logger.endSpanWithError(span, e)
+        logger.error(e)
+      }
+    }
   } catch (e) {
     logger.error(e)
   }
-
-  const errorTypes = ['unhandledRejection', 'uncaughtException']
-  const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
-
-  errorTypes.forEach(type => {
-    process.on(type, async e => {
-      try {
-        console.log(`process.on ${type}`)
-        console.error(e)
-        await consumer.disconnect()
-        process.exit(0)
-      } catch (_) {
-        process.exit(1)
-      }
-    })
-  })
-
-  signalTraps.forEach(type => {
-    process.once(type, async () => {
-      try {
-        await consumer.disconnect()
-      } finally {
-        process.kill(process.pid, type)
-      }
-    })
-  })
 }
 
 /**
